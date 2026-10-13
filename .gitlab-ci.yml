@@ -1,0 +1,25 @@
+stages:
+  - run-ai-factory
+
+# Main job executed either manually or via Scheduled Pipelines
+ai_factory_runner:
+  stage: run-ai-factory
+  image: python:3.11-slim
+  rules:
+    # Trigger on scheduled runs or manual button clicks in GitLab UI
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "web"
+  before_script:
+    - apt-get update && apt-get install -y git jq curl
+    # Configure Git bot identity for master/main branch updates
+    - git config --global user.name "AI Factory Bot"
+    - git config --global user.email "ai-factory-bot@domain.com"
+    - git remote set-url origin "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
+  script:
+    - echo "Starting AI Factory task processing loop..."
+    # Execute python script that parses tasks/ directory and processes state
+    - python scripts/run_ai_factory.py
+  artifacts:
+    when: always
+    paths:
+      - ai_factory.log
