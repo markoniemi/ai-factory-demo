@@ -1,6 +1,6 @@
 ---
 id: task-001
-status: planned
+status: in_progress
 priority: medium
 branch: task/001-ai-blog-post
 pr_url: ""
