@@ -1,0 +1,6 @@
+{
+  "defaultShell": "powershell",
+  "permissions": {
+    "deny": ["Bash"]
+  }
+}

@@ -21,6 +21,16 @@ branch: task/001-short-description
 * The task file is the source of truth for `status` and `priority`. The brackets in
   `Tasks.md` mirror it; keep them in step (see **Backlog mirror**).
 
+## Shell
+
+Windows. Use the PowerShell tool; the Bash tool is denied in
+`.claude/settings.json`.
+
+* No `&&` or `||` in PowerShell 5.1: use `;`, and `if ($?) { ... }` to run a command
+  only when the previous one succeeded.
+* No `python` on `PATH`.
+* Here-strings (`@'...'@`), not heredocs. The closing `'@` must start at column 0.
+
 ## Selection
 
 1. Scan `docs/tasks/task-*.md`.
