@@ -51,7 +51,9 @@ plan: [task-005-remove-ci-and-sonar.md](task-005-remove-ci-and-sonar.md)
 
 - readme states ci and sonar. in this case there is no ci, and review is done by human.
 
-### powershell setting [planned, high]
+### powershell setting [in_progress, high]
+
+plan: [task-006-powershell-setting.md](task-006-powershell-setting.md)
 
 - is there a claude setting that tells that we are in windows, and powershell should be used? to prevent misses with commands.
 
