@@ -56,4 +56,8 @@ plan: [task-007-clean-tasks.md](task-007-clean-tasks.md)
 
 is there a way to state task as lightweight, which does not need plan or branch, can be committed to main.
 
+### powerpoint presentation [draft, low]
+
+- when tasks workflow and plugin/skill implementation, a powerpoint presentation would be nice
+
 
