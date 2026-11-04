@@ -1,6 +1,6 @@
 ---
 id: task-002
-status: in_progress
+status: done
 priority: high
 branch: task/002-move-tasks-to-docs
 pr_url: ""
