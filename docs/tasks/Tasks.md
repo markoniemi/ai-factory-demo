@@ -27,3 +27,16 @@ Move the task directory from `Tasks/` to `docs/tasks/` so all documentation live
 under `docs/`. Update every reference to the old path (`Tasks/README.md`,
 `Tasks/Tasks.md`, `.gitlab-ci.yml`, any runner scripts) and keep the git history of
 the moved files by using `git mv`.
+
+### move tasks readme to agents [→ task-003-move-tasks-readme-to-agents.md]
+
+- should task readme be a separated readme for humans and agents.md for ai?
+
+### remove ci and sonar [draft, low]
+
+- readme states ci and sonar. in this case there is no ci, and review is done by human.
+
+### tasks branch name [draft, low]
+
+- git supports branches bug/feature/hotfix. how should tasks.md state what kind of branch is needed?
+- also, branch is not always needed, how to tell ai not to use branch? when status is planned and there is no plan?
