@@ -25,12 +25,6 @@ Priorities: `high` | `medium` | `low`.
 
 ## Backlog
 
-### remove ci and sonar [done, low]
-
-plan: [task-005-remove-ci-and-sonar.md](task-005-remove-ci-and-sonar.md)
-
-- readme states ci and sonar. in this case there is no ci, and review is done by human.
-
 ### powershell setting [done, high]
 
 plan: [task-006-powershell-setting.md](task-006-powershell-setting.md)
