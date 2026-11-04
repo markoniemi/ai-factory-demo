@@ -4,8 +4,8 @@ Inbox for new tasks. A human adds an entry; the AI turns it into a task file. Se
 `README.md` for how, and `AGENTS.md` for the rules.
 
 Entry format — `### <short title> [<status>, <priority>]` plus a short explanation.
-Once the AI has created the task file, the brackets become `[→ task-NNN-<slug>.md]`
-and the task file owns the status from then on.
+Once the AI has created the task file, it adds a `plan: <link>` line under the
+heading and keeps the brackets up to date as the status changes.
 
 Statuses:
 
@@ -24,18 +24,24 @@ Priorities: `high` | `medium` | `low`.
 
 ## Backlog
 
-### move Tasks to docs/tasks [→ task-002-move-tasks-to-docs.md]
+### move Tasks to docs/tasks [done, high]
+
+plan: [task-002-move-tasks-to-docs.md](task-002-move-tasks-to-docs.md)
 
 Move the task directory from `Tasks/` to `docs/tasks/` so all documentation lives
 under `docs/`. Update every reference to the old path (`Tasks/README.md`,
 `Tasks/Tasks.md`, `.gitlab-ci.yml`, any runner scripts) and keep the git history of
 the moved files by using `git mv`.
 
-### move tasks readme to agents [→ task-003-move-tasks-readme-to-agents.md]
+### move tasks readme to agents [done, medium]
+
+plan: [task-003-move-tasks-readme-to-agents.md](task-003-move-tasks-readme-to-agents.md)
 
 - should task readme be a separated readme for humans and agents.md for ai?
 
-### reference to plan [planned, high]
+### reference to plan [in_progress, high]
+
+plan: [task-004-reference-to-plan.md](task-004-reference-to-plan.md)
 
 tasks.md now has [→ task-003-move-tasks-readme-to-agents.md] in task heading. Reference to plan should be under header like plan: <link to file>. tasks.md heading should contain state and priority, and ai should update it as necessary.
 

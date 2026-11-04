@@ -19,7 +19,8 @@ pr_url: ""
 ---
 ```
 
-* The task file is the only source of truth for `status` and `priority`.
+* The task file is the source of truth for `status` and `priority`. The brackets in
+  `Tasks.md` mirror it; keep them in step (see **Backlog mirror**).
 
 ## Selection
 
@@ -39,8 +40,18 @@ When asked to start a named task, or the next task, from `Tasks.md`:
    `priority` from the entry's brackets, leave `pr_url` empty.
 4. Copy the entry's explanation into the body as the task description. Do not write
    an implementation plan yet.
-5. Replace the entry's brackets with a pointer: `[→ task-NNN-<slug>.md]`. Never
-   update that entry again.
+5. Add a link to the task file as the first line under the entry's heading:
+   `plan: [task-NNN-<slug>.md](task-NNN-<slug>.md)`. Leave the brackets in place.
+
+## Backlog mirror
+
+The brackets in a `Tasks.md` entry always read `[<status>, <priority>]`, for the
+whole life of the task. Keep the mirror in step, in both directions:
+
+* You change a task file's `status` → update that entry's brackets in the same
+  commit.
+* A human changed the brackets → copy the new `status` and `priority` into the task
+  file's frontmatter when you next pick the task up, and work from that.
 
 ## Transitions
 

@@ -19,9 +19,21 @@ Move the task directory from `Tasks/` to `docs/tasks/` so all documentation
 lives under `docs/`.
 ```
 
-The brackets hold the starting status and the priority. Then ask the AI to start
-that task by name, or to take the next one. The AI creates the task file and turns
-the brackets into a pointer to it, after which the task file owns the status.
+The brackets hold the status and the priority. Then ask the AI to start that task by
+name, or to take the next one. The AI creates the task file, links it under the
+heading, and keeps the brackets up to date from then on:
+
+```markdown
+### move Tasks to docs/tasks [done, high]
+
+plan: [task-002-move-tasks-to-docs.md](task-002-move-tasks-to-docs.md)
+
+Move the task directory from `Tasks/` to `docs/tasks/` so all documentation
+lives under `docs/`.
+```
+
+Edit the brackets yourself to re-prioritise a task or to ask for planning; the AI
+reads the change back into the task file.
 
 ## Pipeline
 
