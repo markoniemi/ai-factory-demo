@@ -1,6 +1,6 @@
 ---
 id: task-008
-status: in_review
+status: done
 priority: medium
 branch: task/008-superpowers-compatibility
 ---

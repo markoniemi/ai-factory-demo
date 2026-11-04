@@ -39,16 +39,18 @@ plan: [task-007-clean-tasks.md](task-007-clean-tasks.md)
 - git supports branches bug/feature/hotfix. how should tasks.md state what kind of branch is needed?
 - also, branch is not always needed, how to tell ai not to use branch? when status is planned and there is no plan?
 
-### tasks as skill [draft, medium]
+### tasks as skill [planning, medium]
 
 - instead of having readme/agents in docs/tasks this should be either plugin or a skill, so it could be reused in other repositories.
 
-### tasks as plugin vs skill [draft, medium]
+### tasks as plugin vs skill [planned, medium]
+
+plan: [task-009-tasks-as-plugin-vs-skill.md](task-009-tasks-as-plugin-vs-skill.md)
 
 - Does plugin support commands like /next-task /clean-tasks if tasks is a plugin?
 - can skill be reused, or is it necessary to create and publish a plugin?
 
-### superpowers compatibility [in_review, medium]
+### superpowers compatibility [done, medium]
 
 plan: [task-008-superpowers-compatibility.md](task-008-superpowers-compatibility.md)
 
