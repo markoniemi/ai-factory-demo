@@ -1,6 +1,6 @@
 ---
 id: task-007
-status: planned
+status: in_progress
 priority: high
 branch: task/007-clean-tasks
 ---
@@ -46,17 +46,12 @@ commit that finishes the task makes that commit hard to read.
 - **Clean every `done` task at once** when asked, oldest first, in one commit per
   task so each deletion is reviewable on its own.
 
-## Open questions (for human to verify)
+## Decisions (verified by human, 2026-11-04)
 
-- **Trigger:** the plan assumes cleaning happens when you ask for it, not
-  automatically when a task reaches `done`. Confirm, or say it should be part of the
-  `approved` → `done` step.
-- **task-001:** it is `done` but its subject (the blog post) was never created in
-  this repository, and its plan is the only record of what was intended. Confirm it
-  may be deleted with the rest, or say it stays until the post exists.
-- **Entry removal:** the plan removes the whole `Tasks.md` entry, so `Tasks.md`
-  holds only open work. Say so if you want the heading left behind as a one-line
-  record.
+- **Trigger:** on request only, not part of `approved` → `done`.
+- **task-001:** delete it with the rest, even though the blog post it describes was
+  never written in this repository.
+- **Entry removal:** remove the whole `Tasks.md` entry. It is in git history.
 
 ## Steps
 
