@@ -1,6 +1,6 @@
 ---
 id: task-003
-status: in_progress
+status: done
 priority: medium
 branch: task/003-move-tasks-readme-to-agents
 pr_url: ""
