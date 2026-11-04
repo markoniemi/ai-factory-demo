@@ -1,21 +1,24 @@
 # Task Backlog
 
-Inbox for new tasks. A **human** adds an entry here; the AI turns an entry into a
-task file in `docs/tasks/` on request. See `docs/tasks/README.md` for the full protocol.
+Inbox for new tasks. A human adds an entry; the AI turns it into a task file. See
+`README.md` for how, and `AGENTS.md` for the rules.
 
-## Entry format
+Entry format — `### <short title> [<status>, <priority>]` plus a short explanation.
+Once the AI has created the task file, the brackets become `[→ task-NNN-<slug>.md]`
+and the task file owns the status from then on.
 
-```markdown
-### <short title> [<status>, <priority>]
+Statuses:
 
-<short explanation: what and why, a few sentences or bullets>
-```
+* `draft` — written down, not planned yet.
+* `planning` — a human asked the AI to plan it.
+* `planned` — plan written, waiting for a human to verify it.
+* `in_progress` — the AI is implementing it on its branch.
+* `in_review` — pull request open, under review.
+* `changes_requested` — review found failures or findings to fix.
+* `approved` — review passed, waiting for a human to merge.
+* `done` — merged and branch deleted.
 
-* `status` — usually `draft` (see the status list in `docs/tasks/README.md`).
-* `priority` — `high` | `medium` | `low`.
-* Once the AI has created the task file, the brackets are replaced by a pointer:
-  `### <short title> [→ task-002-short-title.md]`. After that the task file is the
-  only place where status and priority live; this file is not updated again.
+Priorities: `high` | `medium` | `low`.
 
 ---
 
@@ -28,7 +31,7 @@ under `docs/`. Update every reference to the old path (`Tasks/README.md`,
 `Tasks/Tasks.md`, `.gitlab-ci.yml`, any runner scripts) and keep the git history of
 the moved files by using `git mv`.
 
-### move tasks readme to agents [planning, medium]
+### move tasks readme to agents [→ task-003-move-tasks-readme-to-agents.md]
 
 - should task readme be a separated readme for humans and agents.md for ai?
 
@@ -45,6 +48,6 @@ the moved files by using `git mv`.
 
 - instead of having readme/agents in docs/tasks 
 
-### superpowers compatibility [draft, hight]
+### superpowers compatibility [draft, high]
 
 - using superpowers plugin, which likes to write plans in some place, should tasks be compatible with superpowers plugin?

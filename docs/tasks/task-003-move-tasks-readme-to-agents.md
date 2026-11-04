@@ -32,20 +32,18 @@ Proposed layout:
 automatically (Claude Code, Codex and others). It stays the single source of truth
 for the rules; the README never repeats a rule, it links to it.
 
-## Open questions (for human to verify)
+## Decisions (verified by human, 2026-11-04)
 
-- **Root `AGENTS.md` vs `docs/tasks/AGENTS.md`:** the plan assumes the repo root, so
-  agents pick it up without being told. Confirm.
-- **`CLAUDE.md`:** the repo has none. The plan assumes no `CLAUDE.md` is added and
-  that `AGENTS.md` is the only instruction file. Confirm.
-- **Duplication rule:** the plan assumes the README keeps the pipeline diagram
-  (useful for a human, cheap to keep in sync). Say so if even that should live only
-  in `AGENTS.md`.
+- **Location:** `docs/tasks/AGENTS.md`, not the repo root. A root `AGENTS.md` is
+  project-specific and may reference this one; it is out of scope here.
+- **No `CLAUDE.md`** is added.
+- **The README keeps the pipeline diagram.**
+- **`Tasks.md` intro** stays short but lists the task statuses.
 
 ## Steps
 
 1. Create branch `task/003-move-tasks-readme-to-agents` from `main`.
-2. Create `AGENTS.md` in the repo root, written for the AI, with these sections and
+2. Create `docs/tasks/AGENTS.md`, written for the AI, with these sections and
    nothing else:
    1. **Task files** — tasks live in `docs/tasks/` as `task-NNN-<slug>.md`;
       `README.md` and `Tasks.md` are not task files. The frontmatter schema
