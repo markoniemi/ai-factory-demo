@@ -57,7 +57,9 @@ plan: [task-006-powershell-setting.md](task-006-powershell-setting.md)
 
 - is there a claude setting that tells that we are in windows, and powershell should be used? to prevent misses with commands.
 
-### clean tasks [draft, high]
+### clean tasks [planned, high]
+
+plan: [task-007-clean-tasks.md](task-007-clean-tasks.md)
 
 - this should be part of tasks workflow
 - implemented plans are no longer needed
@@ -71,12 +73,19 @@ plan: [task-006-powershell-setting.md](task-006-powershell-setting.md)
 
 ### tasks as skill [draft, medium]
 
-- instead of having readme/agents in docs/tasks 
+- instead of having readme/agents in docs/tasks this should be either plugin or a skill, so it could be reused in other repositories.
 
 ### tasks as plugin vs skill [draft, medium]
 
 - Does plugin support commands like /next-task /clean-tasks if tasks is a plugin?
+- can skill be reused, or is it necessary to create and publish a plugin?
 
 ### superpowers compatibility [draft, medium]
 
 - using superpowers plugin, which likes to write plans in some place, should tasks be compatible with superpowers plugin?
+
+### lightweight task [planning, high]
+
+is there a way to state task as lightweight, which does not need plan or branch, can be committed to main.
+
+
