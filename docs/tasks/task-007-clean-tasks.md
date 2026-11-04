@@ -1,6 +1,6 @@
 ---
 id: task-007
-status: in_progress
+status: in_review
 priority: high
 branch: task/007-clean-tasks
 ---
