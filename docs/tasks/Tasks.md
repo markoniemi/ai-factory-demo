@@ -48,7 +48,7 @@ plan: [task-007-clean-tasks.md](task-007-clean-tasks.md)
 - Does plugin support commands like /next-task /clean-tasks if tasks is a plugin?
 - can skill be reused, or is it necessary to create and publish a plugin?
 
-### superpowers compatibility [planned, medium]
+### superpowers compatibility [in_review, medium]
 
 plan: [task-008-superpowers-compatibility.md](task-008-superpowers-compatibility.md)
 
@@ -62,4 +62,10 @@ is there a way to state task as lightweight, which does not need plan or branch,
 
 - when tasks workflow and plugin/skill implementation, a powerpoint presentation would be nice
 
+### task id/name [planning, high]
+
+- agents.md states: "A task is a file `docs/tasks/task-NNN-<slug>.md"
+- metadate states: id: task-001
+- what if id was based on task heading, and human promises to make simple task headings
+- should the be a check that heading task can be used as git branch name?
 

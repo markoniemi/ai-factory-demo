@@ -1,6 +1,6 @@
 ---
 id: task-008
-status: planned
+status: in_review
 priority: medium
 branch: task/008-superpowers-compatibility
 ---
@@ -37,64 +37,57 @@ So superpowers and this protocol collide in four places:
 4. **Branch vs worktree.** Ours names one branch in the frontmatter;
    `using-git-worktrees` wants an isolated worktree per plan.
 
-## Recommendation
+## Cost of keeping both
 
-Keep `docs/tasks/` as the single system of record, and treat superpowers as *how*
-the work is thought through, not *where* it is written down. Superpowers' own
-`using-superpowers` skill says project instructions take precedence over skills, so
-this is a supported override rather than a fight with the plugin.
+Measured against the installed plugin:
 
-Concretely:
+* `using-superpowers` is injected at every session start by a plugin hook: ~800
+  tokens, whether or not a skill is used.
+* The 15 skill descriptions sit in the per-turn skill listing: ~630 tokens.
+* A skill that fires costs 2k–20k; all 15 would be ~40k.
 
-* The plan stays in the task file. When `writing-plans` runs, its output goes into
-  the task file's `# Implementation Plan` section instead of
-  `docs/superpowers/plans/`, and no file is created there.
-* A design document from `brainstorming` is allowed, because it is a different
-  artifact from a plan: it may be committed at `docs/superpowers/specs/...` and
-  linked from the task file with a `spec:` line. It is deleted with the task when
-  the task is cleaned.
-* Checkboxes inside the plan are fine — they are detail within one step. `status`
-  in the frontmatter remains the only thing that says where the task is.
-* `finishing-a-development-branch` is **not** used: the `approved` → `done`
-  transition in `AGENTS.md` already fixes the ending, and there is no test suite to
-  gate it on.
-* Worktrees stay optional. The frontmatter `branch` is the contract; whether that
-  branch is checked out in place or in a worktree is the agent's business.
+Over the sessions that built task-001 through task-007, no superpowers skill was
+invoked once. Every task was documentation work from a specification the human had
+already written, which is exactly what `writing-plans` would have produced.
 
-The process skills that cost nothing to keep — `brainstorming`,
-`test-driven-development`, `systematic-debugging`,
-`verification-before-completion` — stay available and are worth using inside the
-`planning` and `in_progress` steps.
+The real cost is not the tokens. `using-superpowers` instructs the agent that if
+there is any chance a skill applies it must be used, and that brainstorming precedes
+creative work — a standing pull towards a second, parallel workflow.
 
-## Open questions (for human to verify)
+## Decision (from human, 2026-11-04)
 
-- **Is superpowers assumed?** The plan writes the override as conditional ("if the
-  superpowers skills are available"), so the protocol still reads correctly in a
-  repository without the plugin. Confirm, or say superpowers is a prerequisite.
-- **Brainstorming before `planning`:** the plan leaves it optional. Say so if
-  `planning` should always start with `brainstorming` and a committed design doc,
-  which adds a conversation round per task.
-- **Depends on `lightweight task`:** a lightweight task has no plan and no branch,
-  so none of this applies to it. That entry is still `planning`; if it lands first,
-  step 2 below needs one extra sentence saying lightweight tasks skip the skills
-  entirely.
+Switch off only the four skills that duplicate this protocol, in **user settings**
+(`~/.claude/settings.json`), not in this repository:
+
+```json
+"skillOverrides": {
+  "superpowers:writing-plans": "off",
+  "superpowers:executing-plans": "off",
+  "superpowers:finishing-a-development-branch": "off",
+  "superpowers:using-git-worktrees": "off"
+}
+```
+
+The ten judgment skills stay: `brainstorming`, `test-driven-development`,
+`systematic-debugging`, `verification-before-completion`, the code-review pair,
+`dispatching-parallel-agents`, `writing-skills`, `diagnosing-superpowers`.
+
+With the collision removed at the source, `AGENTS.md` needs no superpowers section:
+there is no competing plan location left to rule against. Nothing about the plugin
+enters this repository, for the same reason the PowerShell settings stayed out —
+it describes one machine, not this project.
+
+Known limitation: `skillOverrides` governs the skill listing, so it does not stop
+the SessionStart injection of `using-superpowers`. That ~800 tokens per session
+remains until the plugin or its hooks are disabled.
 
 ## Steps
 
-1. Create branch `task/008-superpowers-compatibility` from `main`.
-2. Add a **Superpowers** section to `AGENTS.md`, after **Cleaning up**, stating the
-   override: if the superpowers skills are available, use their thinking but keep
-   the artifacts here — plan into the task file, never into
-   `docs/superpowers/plans/`; `status` not checkboxes; do not use
-   `finishing-a-development-branch`, because `approved` → `done` already says how
-   work ends.
-3. In the same section, allow an optional design document at
-   `docs/superpowers/specs/...` linked by a `spec:` line in the task file.
-4. Extend the **Cleaning up** rule: deleting a task also deletes any spec document
-   its `spec:` line points at.
-5. Add one line to `README.md` saying the protocol owns the plan and the status, and
-   that superpowers skills are used inside the steps.
-6. Verify: `AGENTS.md` names no superpowers path as a plan location;
-   `grep -rn "superpowers" docs` shows mentions only in the new section, the
-   cleanup rule and the README line; `docs/superpowers/` does not exist.
-7. Unit tests: not applicable (documentation only).
+1. Add the `skillOverrides` block above to `~/.claude/settings.json`, merging with
+   the keys already there.
+2. Verify the file still parses and that `writing-plans`, `executing-plans`,
+   `finishing-a-development-branch` and `using-git-worktrees` no longer appear in
+   the available-skills list.
+3. Change nothing in `docs/tasks/`: no `AGENTS.md` section, no `spec:` line, no
+   change to the cleanup rule.
+4. Unit tests: not applicable (configuration only).
