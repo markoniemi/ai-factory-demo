@@ -17,7 +17,7 @@ ai_factory_runner:
     - git remote set-url origin "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
   script:
     - echo "Starting AI Factory task processing loop..."
-    # Execute python script that parses tasks/ directory and processes state
+    # Execute python script that parses docs/tasks/ directory and processes state
     - python scripts/run_ai_factory.py
   artifacts:
     when: always

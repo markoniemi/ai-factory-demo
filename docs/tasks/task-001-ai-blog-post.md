@@ -1,6 +1,6 @@
 ---
 id: task-001
-status: in_progress
+status: done
 priority: medium
 branch: task/001-ai-blog-post
 pr_url: ""
@@ -48,7 +48,7 @@ Create a blog post titled **"Tekoälyn lyhyt oppimäärä"**. Keep the text shor
       - RAG: retrieval of relevant documents into the prompt, and when to use it (large or changing knowledge, not for small stable docs).
       - Konteksti: what it is, plus tips to keep it small (short instructions, new session per task, summarize, fetch only what is needed).
       - Suunnittelu: why plan first, then an implementation plan, then implement in phases (cheaper to fix a plan than code, and small steps are reviewable).
-      - AI-koodausloop / AI-tehdas: the loop draft, plan, implement, review, merge, as in `Tasks/README.md`.
+      - AI-koodausloop / AI-tehdas: the loop draft, plan, implement, review, merge, as in `docs/tasks/README.md`.
 3. Proofread for brevity: remove any section longer than needed. Check Finnish spelling and that all links resolve.
 4. Add unit tests: not applicable (content only). Instead verify that the Markdown renders and has no broken links.
 5. Commit, push the branch, open a PR, set `pr_url`, and set status to `in_review`.
