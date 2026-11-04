@@ -13,9 +13,9 @@ Statuses:
 * `planning` — a human asked the AI to plan it.
 * `planned` — plan written, waiting for a human to verify it.
 * `in_progress` — the AI is implementing it on its branch.
-* `in_review` — pull request open, under review.
-* `changes_requested` — review found failures or findings to fix.
-* `approved` — review passed, waiting for a human to merge.
+* `in_review` — implementation ready on the branch, waiting for review.
+* `changes_requested` — review asked for changes.
+* `approved` — review passed, ready to merge.
 * `done` — merged and branch deleted.
 
 Priorities: `high` | `medium` | `low`.
@@ -45,7 +45,7 @@ plan: [task-004-reference-to-plan.md](task-004-reference-to-plan.md)
 
 tasks.md now has [→ task-003-move-tasks-readme-to-agents.md] in task heading. Reference to plan should be under header like plan: <link to file>. tasks.md heading should contain state and priority, and ai should update it as necessary.
 
-### remove ci and sonar [in_progress, low]
+### remove ci and sonar [in_review, low]
 
 plan: [task-005-remove-ci-and-sonar.md](task-005-remove-ci-and-sonar.md)
 

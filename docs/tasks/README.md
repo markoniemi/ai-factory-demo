@@ -1,8 +1,8 @@
 # AI Task Factory
 
 This directory holds the tasks processed by the automated AI developer engine. A
-human writes down what should happen; the AI plans it, implements it and opens a
-pull request; the human verifies the plan and merges.
+human writes down what should happen; the AI plans it and implements it on a
+branch; the human verifies the plan, reads the diff and merges.
 
 * `Tasks.md` — the backlog: one heading per task idea.
 * `task-NNN-*.md` — one file per task, with its status and its implementation plan.
@@ -44,5 +44,6 @@ Tasks.md entry ──► draft ──► planning ──► planned ──► in
                                                                    changes_requested
 ```
 
-A **human** moves `draft` → `planning`, verifies the plan at `planned`, and merges
-at `approved`. The AI does the rest. See `AGENTS.md` for what it does in each step.
+A **human** moves `draft` → `planning`, verifies the plan at `planned`, reviews the
+branch diff at `in_review`, and merges at `approved`. The AI does the rest. See
+`AGENTS.md` for what it does in each step.

@@ -3,7 +3,6 @@ id: task-003
 status: done
 priority: medium
 branch: task/003-move-tasks-readme-to-agents
-pr_url: ""
 ---
 
 # move tasks readme to agents

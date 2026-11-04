@@ -3,7 +3,6 @@ id: task-001
 status: done
 priority: medium
 branch: task/001-ai-blog-post
-pr_url: ""
 ---
 
 # Blog post: "Tekoälyn lyhyt oppimäärä"

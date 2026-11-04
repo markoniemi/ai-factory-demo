@@ -15,7 +15,6 @@ id: task-001
 status: draft | planning | planned | in_progress | in_review | changes_requested | approved | done
 priority: high | medium | low
 branch: task/001-short-description
-pr_url: ""
 ---
 ```
 
@@ -33,11 +32,11 @@ pr_url: ""
 When asked to start a named task, or the next task, from `Tasks.md`:
 
 1. *Next* = highest priority first; among equal priorities, the entry that appears
-   first in `Tasks.md`. Skip entries that already point to a task file.
+   first in `Tasks.md`. Skip entries that already have a `plan:` line.
 2. `id` = next free number from the existing `task-NNN-*.md` files.
 3. Write `docs/tasks/task-NNN-<slug>.md`, where `<slug>` is the entry title in
    lower case with `-` for spaces. Set `branch: task/NNN-<slug>`, take `status` and
-   `priority` from the entry's brackets, leave `pr_url` empty.
+   `priority` from the entry's brackets.
 4. Copy the entry's explanation into the body as the task description. Do not write
    an implementation plan yet.
 5. Add a link to the task file as the first line under the entry's heading:
@@ -61,16 +60,18 @@ whole life of the task. Keep the mirror in step, in both directions:
 file: the steps, and any open question a human must answer. Set `planned` and stop;
 a human verifies the plan.
 
-**`planned` → `in_progress`** — set `in_progress` on `main` and push. Create the
-branch named in `branch`. Write the code **and unit tests**, then push the branch.
+**`planned` → `in_progress`** — set `in_progress` and commit it on `main`. Create
+the branch named in `branch`. Write the code **and unit tests** and commit them on
+that branch.
 
-**`in_progress` → `in_review`** — open a pull request, write its URL into `pr_url`,
-set `in_review`.
+**`in_progress` → `in_review`** — the implementation is committed on the branch and
+ready to be read. Set `in_review`. This project uses no pull requests.
 
-**`in_review` → `approved`** — review agent only: check that CI passes and code
-quality holds. Pass → `approved`. Fail → `changes_requested`.
+**`in_review` → `approved`** — human only: a human reads the branch diff. Accepted →
+`approved`. Otherwise → `changes_requested`.
 
-**`changes_requested` → `in_review`** — fix the failures or findings on the PR
-branch, push, set `in_review`.
+**`changes_requested` → `in_review`** — fix what the review asked for on the task
+branch, commit, set `in_review`.
 
-**`approved` → `done`** — a human merges. Then delete the branch and set `done`.
+**`approved` → `done`** — merge the branch into `main` (fast-forward), delete the
+branch, set `done`.

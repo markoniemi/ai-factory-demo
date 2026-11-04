@@ -3,7 +3,6 @@ id: task-002
 status: done
 priority: high
 branch: task/002-move-tasks-to-docs
-pr_url: ""
 ---
 
 # move Tasks to docs/tasks

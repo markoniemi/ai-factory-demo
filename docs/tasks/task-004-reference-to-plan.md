@@ -3,7 +3,6 @@ id: task-004
 status: done
 priority: high
 branch: task/004-reference-to-plan
-pr_url: ""
 ---
 
 # reference to plan
