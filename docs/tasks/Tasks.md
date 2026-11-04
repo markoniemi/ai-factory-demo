@@ -25,15 +25,6 @@ Priorities: `high` | `medium` | `low`.
 
 ## Backlog
 
-### move Tasks to docs/tasks [done, high]
-
-plan: [task-002-move-tasks-to-docs.md](task-002-move-tasks-to-docs.md)
-
-Move the task directory from `Tasks/` to `docs/tasks/` so all documentation lives
-under `docs/`. Update every reference to the old path (`Tasks/README.md`,
-`Tasks/Tasks.md`, `.gitlab-ci.yml`, any runner scripts) and keep the git history of
-the moved files by using `git mv`.
-
 ### move tasks readme to agents [done, medium]
 
 plan: [task-003-move-tasks-readme-to-agents.md](task-003-move-tasks-readme-to-agents.md)
