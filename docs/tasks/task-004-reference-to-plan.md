@@ -1,6 +1,6 @@
 ---
 id: task-004
-status: in_progress
+status: in_review
 priority: high
 branch: task/004-reference-to-plan
 pr_url: ""
