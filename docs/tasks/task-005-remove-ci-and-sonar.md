@@ -1,6 +1,6 @@
 ---
 id: task-005
-status: in_review
+status: approved
 priority: low
 branch: task/005-remove-ci-and-sonar
 ---
