@@ -35,6 +35,10 @@ the moved files by using `git mv`.
 
 - should task readme be a separated readme for humans and agents.md for ai?
 
+### reference to plan [planned, high]
+
+tasks.md now has [→ task-003-move-tasks-readme-to-agents.md] in task heading. Reference to plan should be under header like plan: <link to file>. tasks.md heading should contain state and priority, and ai should update it as necessary.
+
 ### remove ci and sonar [draft, low]
 
 - readme states ci and sonar. in this case there is no ci, and review is done by human.
@@ -51,3 +55,8 @@ the moved files by using `git mv`.
 ### superpowers compatibility [draft, high]
 
 - using superpowers plugin, which likes to write plans in some place, should tasks be compatible with superpowers plugin?
+
+### tasks as plugin vs skill
+
+- Does plugin support commands like /next-task /clean-tasks if tasks is a plugin?
+
