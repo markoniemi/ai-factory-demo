@@ -5,7 +5,8 @@ Inbox for new tasks. A human adds an entry; the AI turns it into a task file. Se
 
 Entry format — `### <short title> [<status>, <priority>]` plus a short explanation.
 Once the AI has created the task file, it adds a `plan: <link>` line under the
-heading and keeps the brackets up to date as the status changes.
+heading and keeps the brackets up to date as the status changes. An entry is removed
+when its task is cleaned, so this file shows open work only.
 
 Statuses:
 

@@ -84,3 +84,17 @@ branch, commit, set `in_review`.
 
 **`approved` → `done`** — merge the branch into `main` (fast-forward), delete the
 branch, set `done`.
+
+## Cleaning up
+
+When asked to clean tasks — never on your own, and never as part of reaching
+`done` — delete every `done` task, oldest first, one commit per task:
+
+1. Check that every rule, decision or constraint the task established is already
+   written in `AGENTS.md` or `README.md`. Write it there first if it is not. What
+   only described how the work was carried out is not worth keeping.
+2. Delete the task file.
+3. Remove its whole entry from `Tasks.md`, heading and `plan:` line included.
+
+Nothing of a `done` task stays in `docs/tasks/` except what it changed. The plans
+stay in git history: `git log --diff-filter=D -- docs/tasks/` finds them.

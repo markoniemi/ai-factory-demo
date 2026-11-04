@@ -47,3 +47,7 @@ Tasks.md entry ──► draft ──► planning ──► planned ──► in
 A **human** moves `draft` → `planning`, verifies the plan at `planned`, reviews the
 branch diff at `in_review`, and merges at `approved`. The AI does the rest. See
 `AGENTS.md` for what it does in each step.
+
+Ask the AI to **clean tasks** when `done` tasks pile up: it deletes each finished
+task file and its backlog entry, having first checked that whatever the task
+established is written down in `AGENTS.md` or here. The plans stay in git history.
