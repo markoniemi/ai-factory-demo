@@ -25,12 +25,6 @@ Priorities: `high` | `medium` | `low`.
 
 ## Backlog
 
-### powershell setting [done, high]
-
-plan: [task-006-powershell-setting.md](task-006-powershell-setting.md)
-
-- is there a claude setting that tells that we are in windows, and powershell should be used? to prevent misses with commands.
-
 ### clean tasks [in_progress, high]
 
 plan: [task-007-clean-tasks.md](task-007-clean-tasks.md)
