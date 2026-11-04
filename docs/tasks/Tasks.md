@@ -45,7 +45,7 @@ plan: [task-004-reference-to-plan.md](task-004-reference-to-plan.md)
 
 tasks.md now has [→ task-003-move-tasks-readme-to-agents.md] in task heading. Reference to plan should be under header like plan: <link to file>. tasks.md heading should contain state and priority, and ai should update it as necessary.
 
-### remove ci and sonar [approved, low]
+### remove ci and sonar [done, low]
 
 plan: [task-005-remove-ci-and-sonar.md](task-005-remove-ci-and-sonar.md)
 
