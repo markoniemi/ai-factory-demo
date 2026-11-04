@@ -25,7 +25,7 @@ Priorities: `high` | `medium` | `low`.
 
 ## Backlog
 
-### clean tasks [in_review, high]
+### clean tasks [done, high]
 
 plan: [task-007-clean-tasks.md](task-007-clean-tasks.md)
 
