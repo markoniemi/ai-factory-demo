@@ -51,20 +51,30 @@ plan: [task-005-remove-ci-and-sonar.md](task-005-remove-ci-and-sonar.md)
 
 - readme states ci and sonar. in this case there is no ci, and review is done by human.
 
-### tasks branch name [draft, low]
+### powershell setting [planned, high]
+
+- is there a claude setting that tells that we are in windows, and powershell should be used? to prevent misses with commands.
+
+### clean tasks [draft, high]
+
+- this should be part of tasks workflow
+- implemented plans are no longer needed
+- corresponding headings/chapters in tasks.md can be removed
+- update documentation and usecases before deleting
+
+### tasks branch name [draft, medium]
 
 - git supports branches bug/feature/hotfix. how should tasks.md state what kind of branch is needed?
 - also, branch is not always needed, how to tell ai not to use branch? when status is planned and there is no plan?
 
-### tasks as skill [draft, high]
+### tasks as skill [draft, medium]
 
 - instead of having readme/agents in docs/tasks 
 
-### superpowers compatibility [draft, high]
-
-- using superpowers plugin, which likes to write plans in some place, should tasks be compatible with superpowers plugin?
-
-### tasks as plugin vs skill
+### tasks as plugin vs skill [draft, medium]
 
 - Does plugin support commands like /next-task /clean-tasks if tasks is a plugin?
 
+### superpowers compatibility [draft, medium]
+
+- using superpowers plugin, which likes to write plans in some place, should tasks be compatible with superpowers plugin?
