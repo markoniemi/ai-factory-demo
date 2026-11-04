@@ -23,10 +23,7 @@ branch: task/001-short-description
 
 ## Shell
 
-Windows. Use the PowerShell tool; the Bash tool is denied in
-`.claude/settings.json`, which also sets `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` —
-without that variable a Bash deny rule turns the PowerShell tool off too and leaves
-the session with no shell at all.
+On Windows, use the PowerShell tool rather than Bash.
 
 * No `&&` or `||` in PowerShell 5.1: use `;`, and `if ($?) { ... }` to run a command
   only when the previous one succeeded.

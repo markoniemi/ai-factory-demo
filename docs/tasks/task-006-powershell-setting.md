@@ -23,8 +23,10 @@ box runs for `!` commands, not which tool the agent picks.
 
 ## Decision (from human, 2026-11-04)
 
-Hard-deny the Bash tool in project settings, so nothing bash-shaped can slip
-through:
+Hard-deny the Bash tool, so nothing bash-shaped can slip through. This goes in
+**user settings** (`~/.claude/settings.json`), not in the repository: it describes
+one machine, not this project, and a committed deny rule would follow a colleague
+onto Linux or macOS.
 
 ```json
 {
@@ -54,13 +56,19 @@ On Windows with Git Bash the tool is already on by default for claude.ai and Con
 accounts; the `env` block makes it explicit, and keeps it on for Bedrock, Vertex and
 Foundry sessions, where it is off unless set.
 
+Both keys must sit in the same settings file. Splitting them — the env var in user
+settings, the deny rule committed to the repository — is the footgun the docs name:
+a colleague without the variable gets the deny rule and no shell tool.
+
 ## Steps
 
 1. Create branch `task/006-powershell-setting` from `main`.
-2. Write `.claude/settings.json` with `defaultShell: "powershell"` and
-   `permissions.deny: ["Bash"]`. Commit it — this is a team-wide project setting,
-   not a personal override, so it does not belong in `settings.local.json`.
-3. Add a short **Shell** section to `docs/tasks/AGENTS.md`: Windows, use the
+2. Add `env.CLAUDE_CODE_USE_POWERSHELL_TOOL`, `defaultShell` and
+   `permissions.deny: ["Bash"]` to `~/.claude/settings.json`, merging into the
+   permissions already there. Nothing shell-related is committed to this repository.
+3. Add a short **Shell** section to `docs/tasks/AGENTS.md`: on Windows use the
    PowerShell tool, no `&&`, no `python` on PATH, here-strings instead of heredocs.
+   Do not name the environment variable there — the file is read by agents on other
+   platforms too.
 4. Verify: the settings file parses, and a Bash call is refused.
 5. Unit tests: not applicable (configuration only).
