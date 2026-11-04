@@ -25,12 +25,6 @@ Priorities: `high` | `medium` | `low`.
 
 ## Backlog
 
-### move tasks readme to agents [done, medium]
-
-plan: [task-003-move-tasks-readme-to-agents.md](task-003-move-tasks-readme-to-agents.md)
-
-- should task readme be a separated readme for humans and agents.md for ai?
-
 ### reference to plan [done, high]
 
 plan: [task-004-reference-to-plan.md](task-004-reference-to-plan.md)
