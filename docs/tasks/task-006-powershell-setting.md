@@ -28,6 +28,9 @@ through:
 
 ```json
 {
+  "env": {
+    "CLAUDE_CODE_USE_POWERSHELL_TOOL": "1"
+  },
   "defaultShell": "powershell",
   "permissions": {
     "deny": ["Bash"]
@@ -37,6 +40,19 @@ through:
 
 Cost accepted: PowerShell 5.1 has no `&&` / `||` (use `;` and `if ($?) { ... }`),
 and heredocs become here-strings.
+
+## Why the `env` block is required
+
+The [tools reference](https://code.claude.com/docs/en/tools) warns that a Bash deny
+rule also turns the PowerShell tool off, without a warning, and that *"a rule that
+removes the whole Bash tool leaves Claude with no shell tool for the session"*.
+`CLAUDE_CODE_USE_POWERSHELL_TOOL=1` is the documented way to keep PowerShell on
+alongside the deny rule. `defaultShell: "powershell"` also requires the PowerShell
+tool to be enabled, so without the `env` block it would do nothing either.
+
+On Windows with Git Bash the tool is already on by default for claude.ai and Console
+accounts; the `env` block makes it explicit, and keeps it on for Bedrock, Vertex and
+Foundry sessions, where it is off unless set.
 
 ## Steps
 
