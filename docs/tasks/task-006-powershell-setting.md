@@ -1,6 +1,6 @@
 ---
 id: task-006
-status: in_review
+status: done
 priority: high
 branch: task/006-powershell-setting
 ---
