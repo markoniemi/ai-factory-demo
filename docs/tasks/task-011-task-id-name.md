@@ -1,6 +1,6 @@
 ---
 id: task-011
-status: approved
+status: done
 priority: high
 branch: task/011-task-id-name
 ---
