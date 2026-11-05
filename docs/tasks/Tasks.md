@@ -62,9 +62,9 @@ plan: [task-008-superpowers-compatibility.md](task-008-superpowers-compatibility
 
 - using superpowers plugin, which likes to write plans in some place, should tasks be compatible with superpowers plugin?
 
-### lightweight task [planning, high]
+### feature vs task [planning, high]
 
-is there a way to state task as lightweight, which does not need plan or branch, can be committed to main.
+- how to create features and tasks from tasks.md? feature requires branch, possibly pr. task does not need plan and can be done directly on main.
 
 ### powerpoint presentation [draft, low]
 
