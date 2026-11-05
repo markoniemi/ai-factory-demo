@@ -17,14 +17,14 @@ branch: task/009-tasks-as-plugin-vs-skill
 From the [plugins overview](https://code.claude.com/docs/en/plugins):
 
 **Does a plugin give slash commands?** Yes. A plugin's skill "runs as
-`/my-plugin:review`" — so a `tasks` plugin holding `next-task` and `clean-tasks`
-skills gives `/tasks:next-task` and `/tasks:clean-tasks`. The names are namespaced
+`/my-plugin:review`" — so a `task` plugin holding `next-task` and `clean-tasks`
+skills gives `/task:next-task` and `/task:clean-tasks`. The names are namespaced
 by the plugin; you do not get a bare `/next-task` from a plugin.
 
 **Is a plugin necessary for reuse?** No. "Skills, subagents, hooks, and MCP servers
 all work on their own, without a plugin. A skill you save in `~/.claude/skills/`
-[…] is available in every project on your machine." A bare `~/.claude/skills/tasks/`
-is invocable as `/tasks`, and a custom command file in `~/.claude/commands/` gives a
+[…] is available in every project on your machine." A bare `~/.claude/skills/task/`
+is invocable as `/task`, and a custom command file in `~/.claude/commands/` gives a
 bare `/next-task`. Nothing has to be published.
 
 A plugin is for when you want "several skills, subagents, hooks, or MCP servers
@@ -42,11 +42,12 @@ Build it as a **plugin directory from the start**, and use it locally. The files
 the same either way, so this costs nothing now and avoids a rewrite later:
 
 ```
-tasks-plugin/
-  .claude-plugin/plugin.json      name: tasks, version
+task-plugin/
+  .claude-plugin/plugin.json      name: task, version
   skills/next-task/SKILL.md       pick and start the next backlog task
   skills/clean-tasks/SKILL.md     the Cleaning up rule
-  skills/tasks/SKILL.md           the protocol itself (today's AGENTS.md)
+  skills/task/SKILL.md            the protocol itself (today's AGENTS.md),
+                                  and `/task:task <name>` to start a named task
 ```
 
 Reasons it wins over a bare skill here:
@@ -72,14 +73,16 @@ of relying on the agent having read the repository.
 
 ## Relationship to the other entry
 
-`tasks as skill` asks the same question from the other side. This task decides
+`package tasks as a github plugin` asks the same question from the other side —
+it was `tasks as skill` when this plan was written. This task decides
 **which packaging**; that one is the **implementation** once the decision is made.
 It should be re-worded to "package tasks as a plugin" and kept, not deleted.
 
 ## Decision (from human, 2026-11-05)
 
 **A plugin**, published as its own GitHub repository, so it can be installed into a
-work project.
+work project. The plugin is named **`task`** (singular), so its skills namespace as
+`/task:*`; the repository is `task-plugin`.
 
 This settles it, because a bare skill has no install path from GitHub: you would
 clone the repository and copy files into `~/.claude/skills/` on every machine, with
@@ -89,7 +92,7 @@ marketplace:
 
 ```
 /plugin marketplace add <owner>/<repo>
-/plugin install tasks@<repo>        # user scope: every project on that machine
+/plugin install task@<repo>         # user scope: every project on that machine
 ```
 
 That is the same mechanism this machine already uses for the `caveman` plugin
@@ -113,8 +116,9 @@ updates.
 - **`docs/tasks/AGENTS.md` is deleted once the plugin exists**, with no stub left
   behind. The rules live in the plugin's `tasks` skill; a project keeps only
   `Tasks.md`, its task files, and `README.md` for the humans.
-- **Namespaced commands are accepted**: `/tasks:next-task` and
-  `/tasks:clean-tasks`. The plugin needs no command files, only skills.
+- **Namespaced commands are accepted**, under the `task` namespace:
+  `/task:next-task`, `/task:clean-tasks`, and `/task:task <name-of-task>` to start a
+  named backlog entry. The plugin needs no command files, only skills.
 
 Both are the implementation task's work, not this one's.
 
