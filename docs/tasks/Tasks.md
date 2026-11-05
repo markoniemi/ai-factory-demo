@@ -1,7 +1,8 @@
 # Task Backlog
 
 Inbox for new tasks. A human adds an entry; the AI turns it into a task file. See
-`README.md` for how, and `AGENTS.md` for the rules.
+`README.md` for how. The rules come from the `task` plugin, not from this
+directory.
 
 Entry format — `### <short title> [<status>, <priority>]` plus a short explanation.
 Once the AI has created the task file, it adds a `plan: <link>` line under the
@@ -71,7 +72,7 @@ is there a way to state task as lightweight, which does not need plan or branch,
 
 ### task id/name [planning, high]
 
-- agents.md states: "A task is a file `docs/tasks/task-NNN-<slug>.md"
+- the protocol states: "A task is a file `docs/tasks/task-NNN-<slug>.md"
 - metadate states: id: task-001
 - what if id was based on task heading, and human promises to make simple task headings
 - should the be a check that heading task can be used as git branch name?

@@ -1,0 +1,16 @@
+{
+  "name": "task-plugin",
+  "description": "Marko Niemi's marketplace: the task plugin, a backlog-to-branch task protocol.",
+  "owner": {
+    "name": "Marko Niemi",
+    "url": "https://github.com/markoniemi"
+  },
+  "plugins": [
+    {
+      "name": "task",
+      "source": "./",
+      "description": "A backlog-to-branch task protocol, as three skills: /task:task, /task:next-task and /task:clean-tasks.",
+      "category": "workflow"
+    }
+  ]
+}
