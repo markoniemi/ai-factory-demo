@@ -1,6 +1,6 @@
 ---
 id: task-010
-status: planned
+status: in_progress
 priority: medium
 branch: task/010-package-tasks-as-a-github-plugin
 ---

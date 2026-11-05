@@ -39,7 +39,7 @@ plan: [task-007-clean-tasks.md](task-007-clean-tasks.md)
 - git supports branches bug/feature/hotfix. how should tasks.md state what kind of branch is needed?
 - also, branch is not always needed, how to tell ai not to use branch? when status is planned and there is no plan?
 
-### package tasks as a github plugin [planned, medium]
+### package tasks as a github plugin [in_progress, medium]
 
 plan: [task-010-package-tasks-as-a-github-plugin.md](task-010-package-tasks-as-a-github-plugin.md)
 
