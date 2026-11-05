@@ -10,5 +10,19 @@
   "homepage": "https://github.com/markoniemi/task-plugin",
   "repository": "https://github.com/markoniemi/task-plugin",
   "license": "MIT",
-  "keywords": ["tasks", "backlog", "workflow", "planning"]
+  "keywords": ["tasks", "backlog", "workflow", "planning"],
+  "userConfig": {
+    "create_branch": {
+      "type": "boolean",
+      "title": "Create a branch per task",
+      "description": "Whether a task may have its own branch. Off means every task is committed on main.",
+      "default": true
+    },
+    "create_pull_request": {
+      "type": "boolean",
+      "title": "Open a pull request",
+      "description": "Whether reaching in_review opens a pull request on GitHub, or a merge request on GitLab. Needs a branch.",
+      "default": false
+    }
+  }
 }

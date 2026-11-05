@@ -44,6 +44,8 @@ branch: task/short-description
 ---
 ```
 
+* `branch:` is there when the task has a branch. With `create_branch` off (see
+  **Configuration**) the task has none, and the key is left out.
 * The task file is the source of truth for `status` and `priority`. The brackets in
   `Tasks.md` mirror it; keep them in step (see **Backlog mirror**).
 
@@ -84,6 +86,57 @@ whole life of the task. Keep the mirror in step, in both directions:
 * A human changed the brackets → copy the new `status` and `priority` into the task
   file's frontmatter when you next pick the task up, and work from that.
 
+## Configuration
+
+Two keys decide what the transitions may do. Both are booleans.
+
+| Key | Default | What it permits |
+| :- | :- | :- |
+| `create_branch` | `true` | A task may have its own branch. |
+| `create_pull_request` | `false` | Reaching `in_review` opens a request on the host. |
+
+Precedence for each key, highest first:
+
+1. The YAML frontmatter at the very top of `docs/tasks/Tasks.md`:
+
+   ```markdown
+   ---
+   create_branch: true
+   create_pull_request: false
+   ---
+   ```
+
+2. The value the human gave Claude Code for this plugin: `create_branch` is
+   `${user_config.create_branch}` and `create_pull_request` is
+   `${user_config.create_pull_request}`.
+3. The defaults in the table above.
+
+An unknown key in that frontmatter is ignored. A value that is neither `true` nor
+`false` is not guessed at: stop and ask the human to fix it. A frontmatter block
+that is not at the very top of `Tasks.md` is not configuration.
+
+Each key is a **ceiling, not a default**. `create_branch: false` means no task
+gets a branch, and nothing per task overrides that. `create_branch: true` only
+permits a branch; which work uses one is this protocol's decision. The same
+reading applies to `create_pull_request`.
+
+`create_pull_request: true` together with `create_branch: false` is a
+contradiction: there is no branch to open a request from. Report it and stop
+rather than resolving it either way.
+
+## The host, when requests are on
+
+Read the host from `git remote get-url origin`. A `github.com` remote uses `gh`,
+a GitLab remote uses `glab`; GitLab calls the request a merge request.
+
+| Host | Open the request | Check it is merged |
+| :- | :- | :- |
+| GitHub | `gh pr create --fill --base main --head <branch>` | `gh pr view <branch> --json state,mergedAt` |
+| GitLab | `glab mr create --fill --target-branch main --source-branch <branch>` | `glab mr view <branch> --output json` |
+
+The tool missing, or not authenticated: report it and stay where you are. Never
+fall back to a local merge to get around it.
+
 ## Transitions
 
 **`draft` → `planning`** — human only. Do not set `planning` yourself.
@@ -92,21 +145,35 @@ whole life of the task. Keep the mirror in step, in both directions:
 file: the steps, and any open question a human must answer. Set `planned` and stop;
 a human verifies the plan.
 
-**`planned` → `in_progress`** — set `in_progress` and commit it on `main`. Create
-the branch named in `branch`. Write the code **and unit tests** and commit them on
-that branch.
+**`planned` → `in_progress`** — set `in_progress` and commit it on `main`. With
+`create_branch` on, create the branch named in `branch` and write the code **and
+unit tests** on it. With `create_branch` off, leave `branch:` out of the task
+file's frontmatter and commit the code and tests on `main`.
 
-**`in_progress` → `in_review`** — the implementation is committed on the branch and
-ready to be read. Set `in_review`. This protocol uses no pull requests.
+**`in_progress` → `in_review`** — the implementation is committed and ready to be
+read. With `create_pull_request` off, nothing is pushed and nothing is opened: set
+`in_review`, and the human reads the branch, or the commits on `main` when there
+is no branch. With `create_pull_request` on, push the branch, open the request as
+**The host** above describes, add its URL to the task file as a `pr:` line under
+the frontmatter, and set `in_review`.
 
-**`in_review` → `approved`** — human only: a human reads the branch diff. Accepted →
+**`in_review` → `approved`** — human only. A human reads the branch diff, the
+commits on `main` when there is no branch, or the open request on the host.
+Accepted →
 `approved`. Otherwise → `changes_requested`.
 
-**`changes_requested` → `in_review`** — fix what the review asked for on the task
-branch, commit, set `in_review`.
+**`changes_requested` → `in_review`** — fix what the review asked for where the work
+lives, the task branch or `main`, commit, and set `in_review`. An open request
+picks the new commits up when the branch is pushed.
 
-**`approved` → `done`** — merge the branch into `main` (fast-forward), delete the
-branch, set `done`.
+**`approved` → `done`** — how the work lands depends on what was permitted:
+
+* No branch: there is nothing to merge. Set `done` and mirror it.
+* A branch and no request: merge it into `main` (fast-forward), delete the branch,
+  set `done`.
+* A request: the host merges it, not you. Check that it is merged as **The host**
+  above describes. Merged: delete the local branch and set `done`. Not merged yet:
+  say so and stop, because merging it is the human's.
 
 A task that wrote no code — a decision record, say — reaches `done` without a branch
 to merge: set the status and mirror it.

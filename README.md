@@ -54,6 +54,30 @@ Statuses: `draft` → `planning` → `planned` → `in_progress` → `in_review`
 `in_review` and merges at `approved`; the agent does the rest. Priorities are
 `high`, `medium` and `low`.
 
+## Configuration
+
+The plugin asks for two values when you enable it, and `/config` shows them:
+
+| Key | Default | What it permits |
+| :- | :- | :- |
+| `create_branch` | `true` | A task may have its own branch. Off: every task is committed on `main`. |
+| `create_pull_request` | `false` | Reaching `in_review` pushes the branch and opens a pull request on GitHub, or a merge request on GitLab. The host then does the merging. |
+
+Those answers are per user, so a project states its own in YAML frontmatter at the
+top of its `docs/tasks/Tasks.md`, which wins over them:
+
+```markdown
+---
+create_branch: true
+create_pull_request: false
+---
+```
+
+Each key is a ceiling, not a default: `create_branch: false` means no task gets a
+branch, and nothing per task overrides it. `create_pull_request: true` needs
+`create_branch: true`, plus `gh` or `glab` authenticated for the `origin` remote;
+the plugin picks the tool from that remote.
+
 ## Tests
 
 ```

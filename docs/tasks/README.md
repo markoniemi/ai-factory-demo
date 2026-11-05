@@ -44,6 +44,30 @@ lives under `docs/`.
 Edit the brackets yourself to re-prioritise a task or to ask for planning; the AI
 reads the change back into the task file.
 
+## Configuration
+
+The top of `Tasks.md` carries this project's answers, as YAML frontmatter:
+
+```markdown
+---
+create_branch: true
+create_pull_request: false
+---
+```
+
+| Key | Default | What it permits |
+| :- | :- | :- |
+| `create_branch` | `true` | A task may have its own branch. Off: everything is committed on `main`. |
+| `create_pull_request` | `false` | Reaching `in_review` opens a pull request on GitHub, or a merge request on GitLab, instead of leaving the branch to be read locally. On: the host does the merging, and the AI only checks that it happened. |
+
+Each key is a ceiling rather than a default: `create_branch: false` takes the
+branch away from every task, whatever else is written down. Omit a key and the
+value falls back to your own answer in `/config`, then to the default above. The
+AI reads these keys itself; edit them and the next task follows them.
+
+`create_pull_request: true` needs `create_branch: true`, and it needs `gh` or
+`glab` on `PATH` and authenticated for the `origin` remote.
+
 ## Pipeline
 
 ```

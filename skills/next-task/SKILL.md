@@ -26,7 +26,9 @@ only decides **which** task is next.
    `status` and `priority` from the entry's brackets, the entry's explanation as the
    body, and a `plan:` link added under the entry's heading. A heading that makes no
    usable slug is the human's to fix, so stop and ask.
-2. Run the transition the entry's status calls for, and stop at the first step that
+2. Whether that task gets a branch, and whether reaching `in_review` opens a
+   request, is the protocol's **Configuration**, not this skill's business.
+3. Run the transition the entry's status calls for, and stop at the first step that
    is a human's — `draft` stays `draft` until a human asks for planning, and a plan
    you wrote waits at `planned` for a human to verify it.
-3. Report what you created, what you did, and what the human has to do next.
+4. Report what you created, what you did, and what the human has to do next.

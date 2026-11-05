@@ -1,6 +1,6 @@
 ---
 id: plugin-config
-status: in_progress
+status: in_review
 priority: high
 branch: task/plugin-config
 ---
@@ -202,3 +202,36 @@ Test 8 in the list above becomes two cases:
   overridable by anything per task, and that a `true` value only permits.
 
 Nothing else in the plan changes.
+## Result
+
+All eight steps are done on `task/plugin-config`.
+
+* `tests/Test-Plugin.ps1`: **30 passed, 0 failed, 0 skipped** (was 21).
+* `claude plugin validate . --strict`: **passed**.
+* `.claude-plugin/plugin.json` declares both options as booleans with their
+  defaults; `skills/task/SKILL.md` gained a **Configuration** section and a
+  **The host, when requests are on** section, and three transitions now branch on
+  the two keys; `docs/tasks/Tasks.md` carries this project's own answers, so the
+  mechanism is dogfooded.
+
+Four notes on what the plan did not foresee:
+
+* `branch:` had to become optional in the task file's frontmatter, not just in
+  prose: with `create_branch` off there is no branch to name. The test that
+  requires the key now reads the project's own config first and requires it only
+  when branches are permitted, and the `check-ref-format` test skips a task file
+  that has no `branch:`.
+* Two more transitions needed a sentence. `in_review` -> `approved` said the human
+  reads "the branch diff", which is wrong with no branch and with a request open;
+  `changes_requested` -> `in_review` said to commit "on the task branch", which is
+  wrong with no branch.
+* The test helpers had to be hoisted. `Get-TaskConfig` is used by the task-file
+  tests, which run before the configuration section, and PowerShell defines
+  functions as it reads the file.
+* One assertion matches `\s+` across words again, for the same reason as in
+  task-011: the protocol's prose wraps at 80 characters, so a phrase a test looks
+  for can break across two lines.
+
+What was deliberately left alone: `clean-tasks` needs no configuration, and the
+keys the human ruled out (`tasks_dir`, `branch_prefix`, `require_tests`) are not
+there.

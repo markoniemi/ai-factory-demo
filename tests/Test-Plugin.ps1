@@ -171,6 +171,33 @@ Test-Case 'no living file names AGENTS.md as the rules' {
     }
 }
 
+$script:ConfigDefaults = @{ create_branch = $true; create_pull_request = $false }
+$script:ConfigOptionKeys = @('type', 'title', 'description', 'required', 'default',
+                             'options', 'multiple', 'sensitive', 'min', 'max')
+
+function Get-TaskConfig {
+    param([string] $Text)
+
+    $config = @{}
+    foreach ($key in $script:ConfigDefaults.Keys) { $config[$key] = $script:ConfigDefaults[$key] }
+
+    $lines = $Text -split "`r?`n"
+    if ($lines.Count -eq 0 -or $lines[0].Trim() -ne '---') { return $config }
+
+    for ($i = 1; $i -lt $lines.Count; $i++) {
+        if ($lines[$i].Trim() -eq '---') { return $config }
+        if ($lines[$i] -match '^([A-Za-z0-9_-]+):\s*(\S+)\s*$') {
+            $key = $matches[1]
+            $value = $matches[2]
+            if (-not $config.ContainsKey($key)) { continue }
+            if ($value -eq 'true') { $config[$key] = $true }
+            elseif ($value -eq 'false') { $config[$key] = $false }
+            else { throw "$key must be true or false, not '$value'" }
+        }
+    }
+    throw 'the frontmatter has no closing delimiter'
+}
+
 Write-Host 'heading-derived task ids'
 
 function Get-TaskSlug {
@@ -236,11 +263,17 @@ Test-Case 'every task file states id, status, priority and branch' {
     $files = Get-TaskFiles
     Assert-True ($files.Count -gt 0) 'docs/tasks holds no task files'
 
+    # branch: is there only when the project permits a branch per task.
+    $keys = @('id', 'status', 'priority')
+    if ((Get-TaskConfig (Get-Content (Join-Path $root 'docs/tasks/Tasks.md') -Raw))['create_branch']) {
+        $keys += 'branch'
+    }
+
     $statuses = @('draft', 'planning', 'planned', 'in_progress', 'in_review',
                   'changes_requested', 'approved', 'done')
     foreach ($file in $files) {
         $fm = Get-Frontmatter $file.FullName
-        foreach ($key in @('id', 'status', 'priority', 'branch')) {
+        foreach ($key in $keys) {
             Assert-True ($fm.ContainsKey($key)) "$($file.Name) has no $key"
         }
         Assert-True ($statuses -contains $fm['status']) "$($file.Name) has an unknown status '$($fm['status'])'"
@@ -267,6 +300,7 @@ if ($git) {
     Test-Case 'every branch name is a legal git ref' {
         foreach ($file in (Get-TaskFiles)) {
             $branch = (Get-Frontmatter $file.FullName)['branch']
+            if ([string]::IsNullOrWhiteSpace($branch)) { continue }
             $null = & $git.Source check-ref-format "refs/heads/$branch"
             if ($LASTEXITCODE -ne 0) { throw "$($file.Name): '$branch' is not a legal branch name" }
         }
@@ -294,6 +328,95 @@ Test-Case 'a heading that cannot make a slug is rejected' {
     Assert-True (-not (Test-TaskSlug (Get-TaskSlug '???'))) 'a heading with no letters or digits must be rejected'
     Assert-True (-not (Test-TaskSlug (Get-TaskSlug 'a'))) 'a one-character slug must be rejected'
     Assert-True (-not (Test-TaskSlug ('x' * 61))) 'a slug longer than 60 characters must be rejected'
+}
+
+Write-Host 'plugin configuration'
+
+
+Test-Case 'the manifest declares both configuration options' {
+    $manifest = Get-JsonFile '.claude-plugin/plugin.json'
+    Assert-True ($null -ne $manifest.userConfig) 'plugin.json must declare userConfig'
+
+    foreach ($pair in @(@('create_branch', $true), @('create_pull_request', $false))) {
+        $option = $manifest.userConfig.($pair[0])
+        Assert-True ($null -ne $option) "userConfig.$($pair[0]) is missing"
+        Assert-Equal 'boolean' $option.type "type of $($pair[0])"
+        Assert-Equal $pair[1] $option.default "default of $($pair[0])"
+        Assert-True (-not [string]::IsNullOrWhiteSpace($option.title)) "title of $($pair[0])"
+        Assert-True (-not [string]::IsNullOrWhiteSpace($option.description)) "description of $($pair[0])"
+    }
+}
+
+Test-Case 'no userConfig option carries a key Claude Code would reject' {
+    # userConfig options are strict objects: an unknown key stops the plugin loading.
+    $manifest = Get-JsonFile '.claude-plugin/plugin.json'
+    foreach ($option in $manifest.userConfig.PSObject.Properties) {
+        foreach ($field in $option.Value.PSObject.Properties.Name) {
+            Assert-True ($script:ConfigOptionKeys -contains $field) "userConfig.$($option.Name).$field is not a documented field"
+        }
+    }
+}
+
+Test-Case 'the protocol states the keys, the layers and the precedence' {
+    $body = Get-Content (Join-Path $root 'skills/task/SKILL.md') -Raw
+    foreach ($rule in @('create_branch', 'create_pull_request', 'Tasks.md',
+                        '${user_config.', 'frontmatter', 'recedence')) {
+        Assert-True ($body -match [regex]::Escape($rule)) "the configuration section must state '$rule'"
+    }
+}
+
+Test-Case 'the protocol states that a key is a ceiling, not a default' {
+    $body = Get-Content (Join-Path $root 'skills/task/SKILL.md') -Raw
+    Assert-True ($body -match 'ceiling') 'the ceiling reading is missing'
+    Assert-True ($body -match 'contradiction') 'the create_pull_request without create_branch case is missing'
+}
+
+Test-Case 'the branch path survives the rewrite' {
+    $body = Get-Content (Join-Path $root 'skills/task/SKILL.md') -Raw
+    # Wrapped prose: match across whitespace, so the test does not dictate the wrap.
+    Assert-True ($body -match 'create\s+the\s+branch\s+named\s+in') 'the protocol must still create the branch named in branch:'
+    Assert-True ($body -match 'fast-forward') 'the local merge must still be stated'
+}
+
+Test-Case 'the request path names both hosts and their commands' {
+    $body = Get-Content (Join-Path $root 'skills/task/SKILL.md') -Raw
+    foreach ($rule in @('gh pr create', 'gh pr view', 'glab mr create', 'glab mr view', 'origin')) {
+        Assert-True ($body -match [regex]::Escape($rule)) "the request path must name '$rule'"
+    }
+    Assert-True (-not ($body -match 'uses no pull requests')) 'the "no pull requests" sentence must be gone'
+}
+
+Test-Case 'configuration is read from the frontmatter over the defaults' {
+    $cases = @(
+        @{ Name = 'no frontmatter';  Text = "# Task Backlog`n`ntext";                       Branch = $true;  Pr = $false },
+        @{ Name = 'branch off';      Text = "---`ncreate_branch: false`n---`n# Backlog";    Branch = $false; Pr = $false },
+        @{ Name = 'request on';      Text = "---`ncreate_pull_request: true`n---`n";        Branch = $true;  Pr = $true },
+        @{ Name = 'both set';        Text = "---`ncreate_branch: false`ncreate_pull_request: true`n---`n"; Branch = $false; Pr = $true },
+        @{ Name = 'unknown key';     Text = "---`nwhatever: 3`n---`n";                      Branch = $true;  Pr = $false },
+        @{ Name = 'not at the top';  Text = "# Backlog`n`n---`ncreate_branch: false`n---`n"; Branch = $true; Pr = $false }
+    )
+    foreach ($case in $cases) {
+        $config = Get-TaskConfig $case.Text
+        Assert-Equal $case.Branch $config['create_branch'] "create_branch with $($case.Name)"
+        Assert-Equal $case.Pr $config['create_pull_request'] "create_pull_request with $($case.Name)"
+    }
+}
+
+Test-Case 'a value that is not a boolean is rejected' {
+    $rejected = $false
+    try { Get-TaskConfig "---`ncreate_branch: yes`n---`n" }
+    catch { $rejected = $true }
+    Assert-True $rejected 'create_branch: yes must be rejected, not guessed at'
+}
+
+Test-Case 'this project states its own configuration' {
+    $text = Get-Content (Join-Path $root 'docs/tasks/Tasks.md') -Raw
+    Assert-True ($text.TrimStart() -match '^---') 'docs/tasks/Tasks.md must open with the configuration frontmatter'
+
+    $config = Get-TaskConfig $text
+    foreach ($key in @('create_branch', 'create_pull_request')) {
+        Assert-True ($config[$key] -is [bool]) "$key must be a boolean"
+    }
 }
 
 Write-Host 'claude plugin validate'

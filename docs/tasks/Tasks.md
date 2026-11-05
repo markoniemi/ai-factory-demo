@@ -1,3 +1,8 @@
+---
+create_branch: true
+create_pull_request: false
+---
+
 # Task Backlog
 
 Inbox for new tasks. A human adds an entry; the AI turns it into a task file. See
@@ -84,7 +89,7 @@ plan: [task-011-task-id-name.md](task-011-task-id-name.md)
 - implementing tasks from tasks.md in same session is not perfect for token spending.
 - is it possible to use agents or somehow clear session for each task automatically?
 
-### plugin config [in_progress, high]
+### plugin config [in_review, high]
 
 plan: [plugin-config.md](plugin-config.md)
 
