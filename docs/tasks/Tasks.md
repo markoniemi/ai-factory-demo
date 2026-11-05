@@ -70,7 +70,9 @@ plan: [task-008-superpowers-compatibility.md](task-008-superpowers-compatibility
 
 - when tasks workflow and plugin/skill implementation, a powerpoint presentation would be nice
 
-### task id/name [planning, high]
+### task id/name [planned, high]
+
+plan: [task-011-task-id-name.md](task-011-task-id-name.md)
 
 - the protocol states: "A task is a file `docs/tasks/task-NNN-<slug>.md"
 - metadate states: id: task-001
