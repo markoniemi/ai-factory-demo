@@ -84,7 +84,7 @@ plan: [task-011-task-id-name.md](task-011-task-id-name.md)
 - implementing tasks from tasks.md in same session is not perfect for token spending.
 - is it possible to use agents or somehow clear session for each task automatically?
 
-### plugin config [planned, high]
+### plugin config [in_progress, high]
 
 plan: [plugin-config.md](plugin-config.md)
 
