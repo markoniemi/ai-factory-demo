@@ -59,12 +59,25 @@ with defaults, so `/config` shows them and a project that says nothing still has
 an answer. The skill reads them as `${user_config.create_branch}` and
 `${user_config.create_pull_request}`.
 
-**Precedence**, stated once in the protocol: the `Tasks.md` frontmatter wins; with
-no frontmatter key, the user's `/config` value; with neither, the built-in default
+**Where one key's value comes from**: the `Tasks.md` frontmatter wins; with no
+frontmatter key, the user's `/config` value; with neither, the built-in default
 (`create_branch: true`, `create_pull_request: false` - what the protocol does
 today). An unknown key in the frontmatter is ignored. A key whose value is neither
 `true` nor `false` is not guessed at: the agent stops and asks, the same way a bad
 heading does.
+
+**What the resulting value means** (decided with the human, 2026-11-05): a key is
+a ceiling, not a default. `create_branch: false` means no task gets a branch, and
+that holds for whatever a later per-entry kind says: a feature in such a project
+runs on `main` like everything else. `create_branch: true` means a branch is
+allowed, and it is then the protocol - today always, later the entry's kind - that
+decides which work uses one. The same reading applies to
+`create_pull_request`.
+
+Stating it as a ceiling is what keeps this task and *feature vs task*
+independent: the two layers are an AND, so neither has to know the other's
+precedence, and `create_branch` means the same thing before and after that task
+lands.
 
 ## What the two keys change
 
@@ -165,41 +178,27 @@ Added to `tests/Test-Plugin.ps1`:
 4. **GitLab**: yes. The pull-request path covers both hosts, as the table above
    describes.
 
-## The one open question: order against *feature vs task*
+## Answers from the human (2026-11-05)
 
-Both tasks answer the same question - does this piece of work get a branch? - from
-different ends, so whichever lands first writes the prose the other has to amend.
+1. **Where the project's answer lives**: `Tasks.md` frontmatter, as planned. No
+   separate config file.
+2. **More keys**: no. `tasks_dir`, `branch_prefix` and `require_tests` stay out.
+   The two keys the backlog entry named are the whole scope.
+3. **Order against *feature vs task***: this task first. A key is a ceiling, so
+   `create_branch: false` takes the branch away from features too, and the two
+   tasks AND together instead of competing. See **What the resulting value
+   means** above; nothing in the transitions has to be rewritten when the kind
+   arrives, only added to.
+4. **GitLab**: yes. The pull-request path covers both hosts, as the table above
+   describes.
 
-* **This task** gives a project-wide default. One answer in `Tasks.md` frontmatter
-  covers every entry in the repository.
-* ***feature vs task*** gives a per-entry kind. Its backlog text says a feature
-  needs a branch and possibly a request, while a task needs no plan and can be
-  done on `main`. That is a per-entry override of the same two decisions, plus a
-  third the config does not touch: whether a plan is written at all.
+## Unit test the ceiling adds
 
-Three ways to sequence them:
+Test 8 in the list above becomes two cases:
 
-**A. This one first.** The transitions learn to read `create_branch` and
-`create_pull_request`. Then *feature vs task* adds a kind on top and the
-precedence line becomes: the entry's kind wins, else the config, else the
-built-in default. Cost: the transitions get rewritten twice, and `create_branch`
-spends its first release as the only answer before being demoted to a fallback.
+* `create_pull_request: true` with `create_branch: false` is reported, not
+  resolved.
+* The protocol states the ceiling in so many words: that a `false` value is not
+  overridable by anything per task, and that a `true` value only permits.
 
-**B. *feature vs task* first.** The transitions learn the kind. Then this task
-shrinks: `create_branch` is no longer needed as a free-standing switch, because
-the kind already decides it; what is left is `create_pull_request`, plus possibly
-a default kind for an entry that states none. Cost: the plan above gets smaller
-and has to be re-planned; the research in it stays valid.
-
-**C. One task.** Fold both into a single pass: the kind, the project default, and
-the precedence written once. Cost: a bigger change to review in one go, and the
-`feature vs task` entry is not planned yet, so this one would wait for it.
-
-Recommendation: **B**. The kind is the more fundamental of the two - it decides
-per entry what the protocol does, and a project-wide switch reads naturally as
-its default rather than the other way round. Deciding it first means
-`create_branch` is designed once, as a fallback, instead of being built as the
-answer and then demoted.
-
-Say A, B or C. Nothing else in this plan depends on the answer: the mechanism
-(frontmatter, `userConfig`, precedence, both hosts) is the same in all three.
+Nothing else in the plan changes.
