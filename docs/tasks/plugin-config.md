@@ -81,15 +81,24 @@ heading does.
 `create_pull_request: true` (requires `create_branch: true`; the two set the other
 way round is a contradiction the agent reports instead of resolving)
 
-* `in_progress` -> `in_review`: push the branch and open a pull request with
-  `gh pr create --fill --base main --head <branch>`, then put its URL in the task
-  file under a `pr:` line and set `in_review`.
+* `in_progress` -> `in_review`: push the branch, open the request on the host, put
+  its URL in the task file under a `pr:` line, and set `in_review`.
 * `approved` -> `done`: the host does the merging, not the agent. Check that the
-  pull request is merged (`gh pr view --json state,mergedAt`), then delete the
-  local branch and set `done`. If it is not merged, say so and stop - the human
-  merges it.
-* `gh` missing or unauthenticated: report it and stay at `in_progress`. Do not
+  request is merged, then delete the local branch and set `done`. If it is not
+  merged, say so and stop - the human merges it.
+* The host comes from `git remote get-url origin`, not from a config key: a
+  `github.com` remote uses `gh`, a GitLab remote uses `glab`. Neither tool
+  installed, or not authenticated: report it and stay at `in_progress`. Do not
   silently fall back to a local merge.
+
+| Host | Open it | Check it is merged |
+| :- | :- | :- |
+| GitHub | `gh pr create --fill --base main --head <branch>` | `gh pr view <branch> --json state,mergedAt` |
+| GitLab | `glab mr create --fill --target-branch main --source-branch <branch>` | `glab mr view <branch> --output json` |
+
+The key stays `create_pull_request` for both. GitLab calls it a merge request, and
+the protocol says so where it names the GitLab commands, but one key covers both
+hosts: a project has one remote, and the question the key answers is the same.
 
 The sentence "This protocol uses no pull requests" comes out of the protocol and
 becomes "pull requests are off by default; `create_pull_request` turns them on".
@@ -130,8 +139,10 @@ Added to `tests/Test-Plugin.ps1`:
 4. **The protocol still covers the default path.** With `create_branch` on, the
    transitions must still say to create the branch named in `branch:`; the test
    asserts the branch-creating sentence survives the rewrite.
-5. **The pull-request path names its tool.** The protocol mentions `gh pr create`
-   and the "not merged -> stop" rule, so the agent cannot invent its own PR step.
+5. **The pull-request path names both tools.** The protocol mentions `gh pr
+   create` and `glab mr create`, says the host is read from the `origin` remote,
+   and keeps the "not merged -> stop" rule, so the agent cannot invent its own
+   request step on either host.
 6. **Config parsing, driven by a table.** A `Get-TaskConfig` helper in the test
    file reads YAML frontmatter from a `Tasks.md` text and merges it over the
    defaults. Cases: no frontmatter -> both defaults; `create_branch: false` ->
@@ -144,25 +155,51 @@ Added to `tests/Test-Plugin.ps1`:
    `create_pull_request: true` with `create_branch: false` is reported, not
    resolved.
 
-## Open questions for the human
+## Answers from the human (2026-11-05)
 
-1. **Where the project's answer lives.** The plan puts it in `Tasks.md`
-   frontmatter. The alternative is a separate `docs/tasks/task.config.json`:
-   easier to validate, one more file to read and to explain. Frontmatter is the
-   recommendation; say if you would rather have the file.
-2. **More keys.** Two others are cheap once the mechanism exists and would remove
-   hardcoded assumptions from the protocol: `tasks_dir` (default `docs/tasks`) and
-   `branch_prefix` (default `task/`). A third, `require_tests` (default `true`),
-   would let a docs-only project stop the protocol from demanding unit tests. None
-   is in the plan's scope; say which you want and they go in the same pass.
-3. **Overlap with *feature vs task*.** That entry (`planning`, high) wants a
-   per-entry choice of branch or no branch. This task gives the project-wide
-   default; that one would give the per-task override, reading as
-   `[<status>, <priority>]` plus a kind. The two fit together, but the order
-   matters: this one first, then that one as an override on top. Confirm that
-   order, or say if *feature vs task* should come first instead.
-4. **Pull requests and the remote.** `gh pr create` needs a GitHub remote and an
-   authenticated `gh`. This repository has one; a project using the plugin may
-   not, which is why the default is `false`. If you want GitLab too (this
-   repository has `.gitlab-ci.yml`), the PR path needs a `glab` branch as well -
-   out of scope unless you say otherwise.
+1. **Where the project's answer lives**: `Tasks.md` frontmatter, as planned. No
+   separate config file.
+2. **More keys**: no. `tasks_dir`, `branch_prefix` and `require_tests` stay out.
+   The two keys the backlog entry named are the whole scope.
+3. **Order against *feature vs task***: open, see below.
+4. **GitLab**: yes. The pull-request path covers both hosts, as the table above
+   describes.
+
+## The one open question: order against *feature vs task*
+
+Both tasks answer the same question - does this piece of work get a branch? - from
+different ends, so whichever lands first writes the prose the other has to amend.
+
+* **This task** gives a project-wide default. One answer in `Tasks.md` frontmatter
+  covers every entry in the repository.
+* ***feature vs task*** gives a per-entry kind. Its backlog text says a feature
+  needs a branch and possibly a request, while a task needs no plan and can be
+  done on `main`. That is a per-entry override of the same two decisions, plus a
+  third the config does not touch: whether a plan is written at all.
+
+Three ways to sequence them:
+
+**A. This one first.** The transitions learn to read `create_branch` and
+`create_pull_request`. Then *feature vs task* adds a kind on top and the
+precedence line becomes: the entry's kind wins, else the config, else the
+built-in default. Cost: the transitions get rewritten twice, and `create_branch`
+spends its first release as the only answer before being demoted to a fallback.
+
+**B. *feature vs task* first.** The transitions learn the kind. Then this task
+shrinks: `create_branch` is no longer needed as a free-standing switch, because
+the kind already decides it; what is left is `create_pull_request`, plus possibly
+a default kind for an entry that states none. Cost: the plan above gets smaller
+and has to be re-planned; the research in it stays valid.
+
+**C. One task.** Fold both into a single pass: the kind, the project default, and
+the precedence written once. Cost: a bigger change to review in one go, and the
+`feature vs task` entry is not planned yet, so this one would wait for it.
+
+Recommendation: **B**. The kind is the more fundamental of the two - it decides
+per entry what the protocol does, and a project-wide switch reads naturally as
+its default rather than the other way round. Deciding it first means
+`create_branch` is designed once, as a fallback, instead of being built as the
+answer and then demoted.
+
+Say A, B or C. Nothing else in this plan depends on the answer: the mechanism
+(frontmatter, `userConfig`, precedence, both hosts) is the same in all three.
