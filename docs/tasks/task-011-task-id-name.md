@@ -1,6 +1,6 @@
 ---
 id: task-011
-status: planned
+status: in_progress
 priority: high
 branch: task/011-task-id-name
 ---
