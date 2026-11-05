@@ -46,7 +46,7 @@ plan: [task-007-clean-tasks.md](task-007-clean-tasks.md)
 - namespaced skills, /task:next-task, /task:clean-tasks, /task:task [name-of-task]
 - delete `docs/tasks/AGENTS.md` once the plugin exists, with no stub. a project keeps `Tasks.md`, its task files and `README.md`.
 
-### tasks as plugin vs skill [in_review, medium]
+### tasks as plugin vs skill [done, medium]
 
 plan: [task-009-tasks-as-plugin-vs-skill.md](task-009-tasks-as-plugin-vs-skill.md)
 

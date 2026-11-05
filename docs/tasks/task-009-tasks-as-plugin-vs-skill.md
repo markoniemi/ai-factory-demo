@@ -1,6 +1,6 @@
 ---
 id: task-009
-status: in_review
+status: done
 priority: medium
 branch: task/009-tasks-as-plugin-vs-skill
 ---
