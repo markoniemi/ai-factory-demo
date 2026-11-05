@@ -70,7 +70,7 @@ plan: [task-008-superpowers-compatibility.md](task-008-superpowers-compatibility
 
 - when tasks workflow and plugin/skill implementation, a powerpoint presentation would be nice
 
-### task id/name [in_progress, high]
+### task id/name [in_review, high]
 
 plan: [task-011-task-id-name.md](task-011-task-id-name.md)
 

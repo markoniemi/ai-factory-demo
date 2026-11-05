@@ -21,10 +21,11 @@ only decides **which** task is next.
 
 ## Then
 
-1. Create the task file as **Creating a task** in the protocol describes: next free
-   `task-NNN`, slug from the entry title, `branch: task/NNN-<slug>`, `status` and
-   `priority` from the entry's brackets, the entry's explanation as the body, and a
-   `plan:` link added under the entry's heading.
+1. Create the task file as **Creating a task** in the protocol describes: the slug
+   of the entry's heading as both the file name and the `id`, `branch: task/<slug>`,
+   `status` and `priority` from the entry's brackets, the entry's explanation as the
+   body, and a `plan:` link added under the entry's heading. A heading that makes no
+   usable slug is the human's to fix, so stop and ask.
 2. Run the transition the entry's status calls for, and stop at the first step that
    is a human's — `draft` stays `draft` until a human asks for planning, and a plan
    you wrote waits at `planned` for a human to verify it.

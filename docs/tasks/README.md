@@ -5,7 +5,7 @@ human writes down what should happen; the AI plans it and implements it on a
 branch; the human verifies the plan, reads the diff and merges.
 
 * `Tasks.md` — the backlog: one heading per task idea.
-* `task-NNN-*.md` — one file per task, with its status and its implementation plan.
+* `<slug>.md` — one file per task, with its status and its implementation plan.
 
 The rules the AI follows are not in this directory: they come from the `task`
 plugin, as its `task` skill. **The rules live there, not here.** See the
@@ -22,6 +22,11 @@ Move the task directory from `Tasks/` to `docs/tasks/` so all documentation
 lives under `docs/`.
 ```
 
+The heading becomes the task file's name: lower-cased, with `-` for every run of
+anything else, so `move Tasks to docs/tasks` becomes `move-tasks-to-docs-tasks.md`.
+Keep headings short and plain; the AI stops and asks you to edit one it cannot turn
+into a file name.
+
 The brackets hold the status and the priority. Then ask the AI to start that task by
 name — `/task:task move Tasks to docs/tasks` — or to take the next one —
 `/task:next-task`. The AI creates the task file, links it under the heading, and
@@ -30,7 +35,7 @@ keeps the brackets up to date from then on:
 ```markdown
 ### move Tasks to docs/tasks [done, high]
 
-plan: [task-002-move-tasks-to-docs.md](task-002-move-tasks-to-docs.md)
+plan: [move-tasks-to-docs-tasks.md](move-tasks-to-docs-tasks.md)
 
 Move the task directory from `Tasks/` to `docs/tasks/` so all documentation
 lives under `docs/`.

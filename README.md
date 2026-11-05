@@ -32,7 +32,7 @@ The protocol itself â€” the task file shape, the statuses and the transitions â€
 
 ```
 docs/tasks/Tasks.md          the backlog: one heading per task idea
-docs/tasks/task-NNN-*.md     one file per task: frontmatter, description, plan
+docs/tasks/<slug>.md         one file per task: frontmatter, description, plan
 docs/tasks/README.md         the pipeline, explained for humans
 ```
 

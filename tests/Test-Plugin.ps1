@@ -126,7 +126,7 @@ Test-Case 'every status name survives in the task skill' {
 
 Test-Case 'the task skill states the task file shape and the backlog mirror' {
     $body = Get-Content (Join-Path $root 'skills/task/SKILL.md') -Raw
-    foreach ($rule in @('task-NNN-', 'Tasks.md', 'branch:', 'priority:')) {
+    foreach ($rule in @('Tasks.md', 'branch:', 'priority:')) {
         Assert-True ($body -match [regex]::Escape($rule)) "rule '$rule' is missing"
     }
 }
@@ -169,6 +169,131 @@ Test-Case 'no living file names AGENTS.md as the rules' {
     if ($hits.Count -gt 0) {
         throw "AGENTS.md is still named as the rules in $($hits -join ', ')"
     }
+}
+
+Write-Host 'heading-derived task ids'
+
+function Get-TaskSlug {
+    param([string] $Heading)
+
+    return ($Heading.ToLowerInvariant() -replace '[^a-z0-9]+', '-').Trim('-')
+}
+
+function Test-TaskSlug {
+    param([string] $Slug)
+
+    return ($Slug -cmatch '^[a-z0-9][a-z0-9-]*[a-z0-9]$') -and ($Slug.Length -le 60)
+}
+
+function Get-TaskFiles {
+    $dir = Join-Path $root 'docs/tasks'
+    if (-not (Test-Path $dir)) { return @() }
+
+    return @(Get-ChildItem -Path $dir -Filter '*.md' -File |
+        Where-Object { $_.Name -ne 'README.md' -and $_.Name -ne 'Tasks.md' })
+}
+
+function Get-Frontmatter {
+    param([string] $Path)
+
+    $lines = Get-Content $Path
+    Assert-Equal '---' $lines[0].Trim() "$Path must start with frontmatter"
+
+    $fields = @{}
+    for ($i = 1; $i -lt $lines.Count; $i++) {
+        if ($lines[$i].Trim() -eq '---') { return $fields }
+        if ($lines[$i] -match '^([A-Za-z0-9_-]+):\s*(.*)$') {
+            $fields[$matches[1]] = $matches[2].Trim()
+        }
+    }
+    throw "$Path has no closing frontmatter delimiter"
+}
+
+Test-Case 'the protocol states the slug rule and the stop-and-ask' {
+    $body = Get-Content (Join-Path $root 'skills/task/SKILL.md') -Raw
+    Assert-True ($body -match [regex]::Escape('^[a-z0-9][a-z0-9-]*[a-z0-9]$')) 'the slug pattern is missing'
+    # The phrase may be wrapped across lines, so match across whitespace.
+    Assert-True ($body -match 'ask\s+the\s+human\s+to\s+edit\s+the\s+heading') 'the stop-and-ask on a bad heading is missing'
+}
+
+Test-Case 'no skill prescribes the numbered scheme any more' {
+    foreach ($name in @('task', 'next-task')) {
+        $body = Get-Content (Join-Path $root "skills/$name/SKILL.md") -Raw
+        foreach ($dead in @('task-NNN', 'task/NNN-', 'next free number')) {
+            Assert-True (-not ($body -match [regex]::Escape($dead))) "skills/$name/SKILL.md still prescribes '$dead'"
+        }
+    }
+}
+
+Test-Case 'the protocol states which files are task files' {
+    $body = Get-Content (Join-Path $root 'skills/task/SKILL.md') -Raw
+    Assert-True ($body -match [regex]::Escape('*.md')) 'the scan rule must name every *.md'
+    Assert-True ($body -match 'except') 'the scan rule must state an exception'
+    Assert-True ($body -match 'README\.md' -and $body -match 'Tasks\.md') 'README.md and Tasks.md must be excluded'
+}
+
+Test-Case 'every task file states id, status, priority and branch' {
+    $files = Get-TaskFiles
+    Assert-True ($files.Count -gt 0) 'docs/tasks holds no task files'
+
+    $statuses = @('draft', 'planning', 'planned', 'in_progress', 'in_review',
+                  'changes_requested', 'approved', 'done')
+    foreach ($file in $files) {
+        $fm = Get-Frontmatter $file.FullName
+        foreach ($key in @('id', 'status', 'priority', 'branch')) {
+            Assert-True ($fm.ContainsKey($key)) "$($file.Name) has no $key"
+        }
+        Assert-True ($statuses -contains $fm['status']) "$($file.Name) has an unknown status '$($fm['status'])'"
+        Assert-True (@('high', 'medium', 'low') -contains $fm['priority']) "$($file.Name) has an unknown priority '$($fm['priority'])'"
+    }
+}
+
+Test-Case 'every task id is its file name, or a legacy numbered id' {
+    foreach ($file in (Get-TaskFiles)) {
+        $fm = Get-Frontmatter $file.FullName
+        $id = $fm['id']
+        if ($id -cmatch '^task-\d{3}$') {
+            Assert-True ($file.BaseName.StartsWith($id)) "$($file.Name) is not named for its legacy id '$id'"
+        }
+        else {
+            Assert-Equal $file.BaseName $id "$($file.Name): id must equal the file name"
+            Assert-True (Test-TaskSlug $id) "$($file.Name): id '$id' does not match the slug rule"
+        }
+    }
+}
+
+$git = Get-Command git -ErrorAction SilentlyContinue
+if ($git) {
+    Test-Case 'every branch name is a legal git ref' {
+        foreach ($file in (Get-TaskFiles)) {
+            $branch = (Get-Frontmatter $file.FullName)['branch']
+            $null = & $git.Source check-ref-format "refs/heads/$branch"
+            if ($LASTEXITCODE -ne 0) { throw "$($file.Name): '$branch' is not a legal branch name" }
+        }
+    }
+}
+else {
+    Skip-Case 'every branch name is a legal git ref' 'git is not on PATH'
+}
+
+Test-Case 'slug derivation follows the rule' {
+    $cases = @(
+        @{ Heading = 'task id/name';           Slug = 'task-id-name' },
+        @{ Heading = 'feature vs task';        Slug = 'feature-vs-task' },
+        @{ Heading = '  Spaces  and--dashes '; Slug = 'spaces-and-dashes' },
+        @{ Heading = 'C# & .NET';              Slug = 'c-net' }
+    )
+    foreach ($case in $cases) {
+        $slug = Get-TaskSlug $case.Heading
+        Assert-Equal $case.Slug $slug "slug of '$($case.Heading)'"
+        Assert-True (Test-TaskSlug $slug) "slug '$slug' must pass the rule"
+    }
+}
+
+Test-Case 'a heading that cannot make a slug is rejected' {
+    Assert-True (-not (Test-TaskSlug (Get-TaskSlug '???'))) 'a heading with no letters or digits must be rejected'
+    Assert-True (-not (Test-TaskSlug (Get-TaskSlug 'a'))) 'a one-character slug must be rejected'
+    Assert-True (-not (Test-TaskSlug ('x' * 61))) 'a slug longer than 60 characters must be rejected'
 }
 
 Write-Host 'claude plugin validate'

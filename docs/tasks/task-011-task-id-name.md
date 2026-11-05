@@ -1,6 +1,6 @@
 ---
 id: task-011
-status: in_progress
+status: in_review
 priority: high
 branch: task/011-task-id-name
 ---
@@ -161,3 +161,27 @@ CI. If that pair ever disagrees, the test file is wrong and the skill is right.
    `branch:` frontmatter becomes optional and test 5 applies only when it is
    present. Nothing here blocks that; it is listed so the two plans do not surprise
    each other.
+## Result
+
+All seven steps are done on `task/011-task-id-name`.
+
+* `tests/Test-Plugin.ps1`: **21 passed, 0 failed, 0 skipped** (was 13).
+* `claude plugin validate . --strict`: **passed**, with the same lone
+  `ICON_MISSING` warning as before, which only matters for a submission to
+  Anthropic's plugin directory.
+* The slug rule is now stated in `skills/task/SKILL.md` and executed by
+  `Get-TaskSlug` / `Test-TaskSlug` in the test file. Both agree on the six cases
+  the plan listed.
+
+Three notes on what the plan did not foresee:
+
+* This task file itself keeps the numbered name. It was created under the old rule
+  before the new one existed, so it is grandfathered along with tasks 007 to 010,
+  and the legacy branch of the test covers it. The first task named by slug will be
+  the next one created.
+* The protocol can no longer spell the legacy form as `task-NNN`, because a test
+  forbids that string in both skills. It names a concrete example instead,
+  `task-007-clean-tasks.md`.
+* One assertion had to match across whitespace. The protocol's prose wraps at 80
+  characters, so a phrase a test looks for can break across two lines; matching
+  `\s+` between the words keeps the test from dictating where the prose wraps.
