@@ -1,6 +1,6 @@
 ---
 id: task-010
-status: in_progress
+status: in_review
 priority: medium
 branch: task/010-package-tasks-as-a-github-plugin
 ---
@@ -106,6 +106,28 @@ not assumed to be installed. Cases:
 6. `docs/tasks/AGENTS.md` does not exist, and no file under `docs/` points at it.
 7. `claude plugin validate .` exits 0, when `claude` is on `PATH`; skipped with a
    printed note when it is not.
+
+## Result
+
+All seven steps are done on `task/010-package-tasks-as-a-github-plugin`.
+
+* `tests/Test-Plugin.ps1`: **13 passed, 0 failed, 0 skipped**.
+* `claude plugin validate . --strict`: **passed**. Its one warning is
+  `ICON_MISSING`, which only matters for a submission to Anthropic's plugin
+  directory, not for installing from this repository.
+* `docs/tasks/AGENTS.md` moved to `skills/task/SKILL.md` — git records it as a
+  rename, so the protocol's history follows it.
+
+Two notes on what the plan did not foresee:
+
+* The "nothing points at `AGENTS.md`" test had to be narrowed. Task files are
+  records of work already done and mention the file as history, which is correct;
+  the test now checks only the files a reader is sent to for the rules —
+  `docs/tasks/README.md` and the `Tasks.md` preamble — and exempts the plugin's own
+  `README.md`, which says there is no `AGENTS.md`.
+* `skills/task/SKILL.md` adds one rule that was implicit before: a task that wrote
+  no code reaches `done` without a branch to merge. Task-009 was the first such
+  task.
 
 ## Open question for the human
 
