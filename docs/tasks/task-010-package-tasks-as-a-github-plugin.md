@@ -1,6 +1,6 @@
 ---
 id: task-010
-status: in_review
+status: approved
 priority: medium
 branch: task/010-package-tasks-as-a-github-plugin
 ---
