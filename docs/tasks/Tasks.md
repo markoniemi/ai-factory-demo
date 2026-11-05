@@ -43,6 +43,8 @@ plan: [task-007-clean-tasks.md](task-007-clean-tasks.md)
 
 - instead of having readme/agents in docs/tasks this should be either plugin or a skill, so it could be reused in other repositories.
 - decided in [task-009-tasks-as-plugin-vs-skill.md](task-009-tasks-as-plugin-vs-skill.md): a plugin in its own github repository, carrying the protocol, next-task and clean-tasks as skills.
+- namespaced skills only, so `/tasks:next-task` and `/tasks:clean-tasks`. no command files.
+- delete `docs/tasks/AGENTS.md` once the plugin exists, with no stub. a project keeps `Tasks.md`, its task files and `README.md`.
 
 ### tasks as plugin vs skill [in_review, medium]
 

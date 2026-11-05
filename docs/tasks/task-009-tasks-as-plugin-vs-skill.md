@@ -108,15 +108,15 @@ Check that policy before depending on it at work. If marketplaces are blocked,
 `--plugin-dir` against a local clone still loads the plugin, at the cost of manual
 updates.
 
-## Still open (for the implementation task)
+### What this means for a project using the plugin
 
-- **What stays in a project?** The assumption is that `Tasks.md` and the task files
-  stay per-repository while the rules move into the plugin, and that
-  `docs/tasks/AGENTS.md` is then deleted. Confirm, or say a stub should remain
-  pointing at the plugin.
-- **Namespaced commands:** a plugin skill runs as `/tasks:next-task`, not
-  `/next-task`. If the bare name matters, the plugin needs a command file as well as
-  a skill.
+- **`docs/tasks/AGENTS.md` is deleted once the plugin exists**, with no stub left
+  behind. The rules live in the plugin's `tasks` skill; a project keeps only
+  `Tasks.md`, its task files, and `README.md` for the humans.
+- **Namespaced commands are accepted**: `/tasks:next-task` and
+  `/tasks:clean-tasks`. The plugin needs no command files, only skills.
+
+Both are the implementation task's work, not this one's.
 
 ## Steps
 
