@@ -39,11 +39,12 @@ plan: [task-007-clean-tasks.md](task-007-clean-tasks.md)
 - git supports branches bug/feature/hotfix. how should tasks.md state what kind of branch is needed?
 - also, branch is not always needed, how to tell ai not to use branch? when status is planned and there is no plan?
 
-### tasks as skill [planning, medium]
+### package tasks as a github plugin [planning, medium]
 
 - instead of having readme/agents in docs/tasks this should be either plugin or a skill, so it could be reused in other repositories.
+- decided in [task-009-tasks-as-plugin-vs-skill.md](task-009-tasks-as-plugin-vs-skill.md): a plugin in its own github repository, carrying the protocol, next-task and clean-tasks as skills.
 
-### tasks as plugin vs skill [planned, medium]
+### tasks as plugin vs skill [in_review, medium]
 
 plan: [task-009-tasks-as-plugin-vs-skill.md](task-009-tasks-as-plugin-vs-skill.md)
 
@@ -71,3 +72,7 @@ is there a way to state task as lightweight, which does not need plan or branch,
 - what if id was based on task heading, and human promises to make simple task headings
 - should the be a check that heading task can be used as git branch name?
 
+### use agents [planning, high]
+
+- implementing tasks from tasks.md in same session is not perfect for token spending.
+- is it possible to use agents or somehow clear session for each task automatically?

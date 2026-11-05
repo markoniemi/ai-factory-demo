@@ -1,6 +1,6 @@
 ---
 id: task-009
-status: planned
+status: in_review
 priority: medium
 branch: task/009-tasks-as-plugin-vs-skill
 ---
@@ -76,24 +76,54 @@ of relying on the agent having read the repository.
 **which packaging**; that one is the **implementation** once the decision is made.
 It should be re-worded to "package tasks as a plugin" and kept, not deleted.
 
-## Open questions (for human to verify)
+## Decision (from human, 2026-11-05)
 
-- **Where does the plugin live?** The plan assumes its own repository, so it can be
-  installed into other projects. The alternative is a `plugin/` directory inside
-  this repository, installed with `--plugin-dir`, which keeps everything in one
-  place but makes reuse elsewhere awkward.
-- **What stays in a project?** The plan assumes `Tasks.md` and the task files stay
-  per-repository, while the rules move into the plugin. Confirm that
-  `docs/tasks/AGENTS.md` is deleted once the plugin holds the rules, or say a short
-  stub should remain pointing at the plugin.
-- **Namespaced commands acceptable?** `/tasks:next-task`, not `/next-task`. If a
-  bare `/next-task` matters, the plugin needs a command file as well as a skill.
+**A plugin**, published as its own GitHub repository, so it can be installed into a
+work project.
+
+This settles it, because a bare skill has no install path from GitHub: you would
+clone the repository and copy files into `~/.claude/skills/` on every machine, with
+no version and no update command. A plugin repository that also carries
+`.claude-plugin/marketplace.json` is installed once per machine and updates from its
+marketplace:
+
+```
+/plugin marketplace add <owner>/<repo>
+/plugin install tasks@<repo>        # user scope: every project on that machine
+```
+
+That is the same mechanism this machine already uses for the `caveman` plugin
+through `extraKnownMarketplaces`.
+
+A plugin is also how skills are published in the first place: the unit a marketplace
+lists is a plugin, and a plugin whose only components are skills is a normal and
+expected shape.
+
+### Caveat for the work project
+
+A repository of your own is a **third-party** marketplace. An employer can restrict
+or block those through managed settings (`strictKnownMarketplaces`,
+`allowedMarketplaces`, `blockedMarketplaces`) or stop plugin installs entirely.
+Check that policy before depending on it at work. If marketplaces are blocked,
+`--plugin-dir` against a local clone still loads the plugin, at the cost of manual
+updates.
+
+## Still open (for the implementation task)
+
+- **What stays in a project?** The assumption is that `Tasks.md` and the task files
+  stay per-repository while the rules move into the plugin, and that
+  `docs/tasks/AGENTS.md` is then deleted. Confirm, or say a stub should remain
+  pointing at the plugin.
+- **Namespaced commands:** a plugin skill runs as `/tasks:next-task`, not
+  `/next-task`. If the bare name matters, the plugin needs a command file as well as
+  a skill.
 
 ## Steps
 
-1. Record the decision in this file once the questions above are answered.
-2. Re-word the `tasks as skill` entry to name the chosen packaging, so the two
-   entries stop describing the same work.
+1. ~~Record the decision in this file once the questions above are answered.~~ Done.
+2. ~~Re-word the `tasks as skill` entry to name the chosen packaging, so the two
+   entries stop describing the same work.~~ Done: it now reads
+   *package tasks as a github plugin*.
 3. Hand the implementation to that entry: this task is a decision record and
    changes no rules on its own.
 4. Unit tests: not applicable (decision only).
