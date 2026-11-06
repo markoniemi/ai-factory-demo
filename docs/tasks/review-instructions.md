@@ -1,6 +1,6 @@
 ---
 id: review-instructions
-status: in_progress
+status: in_review
 priority: medium
 ---
 
@@ -136,3 +136,54 @@ task is implemented second has to say so.
 5. Nothing in the section survives `clean-tasks`. This needs no change:
    `clean-tasks` already discards "what only described how the work was carried
    out".
+## Result
+
+This change has no runtime surface, so its `## How to review` section below takes
+the third shape - read in order, and run the command that proves it. It is the
+first one written under the rule it adds.
+
+* `skills/task/SKILL.md`, `in_progress` -> `in_review`: one paragraph after both
+  halves of the transition, since the section has nothing to do with the host. It
+  names the heading, gives the three shapes in one sentence, requires an unrun step
+  to say so, and caps the section against restating the plan or the `## Result`.
+* `skills/task/SKILL.md`, `in_review` -> `approved`: the human starts from the
+  section, and the status reaching `approved` is the whole signal. That line also
+  reflowed a sentence that had been broken mid-phrase since the plugin was packaged.
+* `docs/tasks/README.md`: one paragraph telling a human reviewer to start there.
+* `tests/Test-Plugin.ps1`: two cases, 39 -> 41.
+
+Three of the five answers needed no code: no section in the request body left
+**The host** untouched, no backfill touched nothing, and nothing surviving
+`clean-tasks` was already covered by that skill discarding "what only described how
+the work was carried out".
+
+What the plan did not foresee: the dropped gate left the plan's test 2 with nothing
+to assert, so it became an assertion that an unrun step must declare itself - the
+honesty the gate was for, tested as prose rather than as a transition that refuses
+to complete.
+
+## How to review
+
+1. Read the new paragraph in `skills/task/SKILL.md` under
+   **`in_progress` → `in_review`**, then the rewritten **`in_review` → `approved`**
+   two paragraphs below it. Those two are the whole change to the rules.
+2. Read the paragraph added to the end of `docs/tasks/README.md`, which is the same
+   rule aimed at a human instead of the agent.
+3. Run `powershell -File tests/Test-Plugin.ps1`. Expect, as the last lines:
+
+   ```
+     PASS  the review handover is part of reaching in_review
+     PASS  a How to review section is never an empty heading
+   claude plugin validate
+     PASS  claude plugin validate passes
+
+   passed 41, failed 0, skipped 0
+   ```
+
+4. `git show --stat` on this task's two commits. Nothing outside `skills/task`,
+   `docs/tasks` and `tests/` should appear - in particular **The host** table is
+   untouched, which is answer 2.
+
+Steps 3 and 4 were run; `claude plugin validate . --strict` prints
+`✔ Validation passed`. Steps 1 and 2 are reading, and the reading was done while
+writing them.

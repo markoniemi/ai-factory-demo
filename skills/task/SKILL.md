@@ -160,10 +160,18 @@ is no branch. With `create_pull_request` on, push the branch, open the request a
 **The host** above describes, add its URL to the task file as a `pr:` line under
 the frontmatter, and set `in_review`.
 
-**`in_review` → `approved`** — human only. A human reads the branch diff, the
-commits on `main` when there is no branch, or the open request on the host.
-Accepted →
-`approved`. Otherwise → `changes_requested`.
+Either way, append a `## How to review` section to the task file first - a handful
+of steps in whichever of these shapes fits the change: how to reach the screen and
+what to look at, the exact command and the output to expect, or what to read in
+what order and the command that proves it. Write steps you have run; a step you
+have not run, a click-through you could not perform, says so. Do not restate the
+plan or the `## Result`.
+
+**`in_review` → `approved`** — human only. A human follows `## How to review` and
+reads the branch diff, the commits on `main` when there is no branch, or the open
+request on the host. Nothing tracks whether they did: the status reaching
+`approved` is the whole signal. Accepted → `approved`. Otherwise →
+`changes_requested`.
 
 **`changes_requested` → `in_review`** — fix what the review asked for where the work
 lives, the task branch or `main`, commit, and set `in_review`. An open request

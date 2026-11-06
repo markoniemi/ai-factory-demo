@@ -83,6 +83,11 @@ A **human** moves `draft` → `planning`, verifies the plan at `planned`, review
 branch diff at `in_review`, and merges at `approved`. The AI does the rest. The
 plugin's `task` skill is what it does in each step.
 
+At `in_review` the task file carries a `## How to review` section: a few steps for
+seeing the change work, written by whoever implemented it. Start there rather than
+with the diff. Nothing records whether you followed it - moving the task to
+`approved` is the whole signal.
+
 Run `/task:clean-tasks` when `done` tasks pile up: it deletes each finished task
 file and its backlog entry, having first checked that whatever the task established
 is written down in the plugin's skills or here. The plans stay in git history.

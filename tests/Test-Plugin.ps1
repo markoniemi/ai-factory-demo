@@ -514,6 +514,31 @@ Test-Case 'the implementation transition owns the documentation' {
     Assert-True ($clean -match 'not\s+this\s+skill') 'clean-tasks must say keeping documentation correct is not its job'
     Assert-True ($clean -match 'never\s+as\s+part\s+of\s+reaching') 'clean-tasks must keep its never-on-your-own guard'
 }
+Test-Case 'the review handover is part of reaching in_review' {
+    $body = (Get-Content (Join-Path $root 'skills/task/SKILL.md') -Raw) -replace "`r`n", "`n"
+    # Each block runs to the next transition heading, which starts with a backtick;
+    # bold text inside the prose does not. Phrases are matched across whitespace:
+    # the test must not dictate where the prose wraps.
+    $step = [regex]::Match($body, '(?s)in_progress.{0,10}in_review.{0,4}\*\*(.*?)(?=\n\*\*\x60)').Value
+    Assert-True ($step.Length -gt 0) 'the in_progress to in_review transition was not found'
+    Assert-True ($step -match '##\s+How\s+to\s+review') 'that transition must name the How to review section'
+    Assert-True ($step -match 'not\s+run') 'that transition must require a step that was not run to say so'
+    Assert-True ($step -match 'restate') 'that transition must cap the section, not restating the plan or the Result'
+
+    $appr = [regex]::Match($body, '(?s)in_review.{0,10}approved.{0,4}\*\*(.*?)(?=\n\*\*\x60)').Value
+    Assert-True ($appr.Length -gt 0) 'the in_review to approved transition was not found'
+    Assert-True ($appr -match 'How\s+to\s+review') 'that transition must point the human at the section'
+    Assert-True ($appr -match 'approved.{0,40}signal|signal') 'that transition must say approved is the whole signal'
+}
+
+Test-Case 'a How to review section is never an empty heading' {
+    foreach ($file in Get-TaskFiles) {
+        $text = ([System.IO.File]::ReadAllText($file.FullName, (New-Object System.Text.UTF8Encoding($false)))) -replace "`r`n", "`n"
+        $m = [regex]::Match($text, '(?s)\n##\s+How to review\s*\n(.*?)(?=\n#|\z)')
+        if (-not $m.Success) { continue }
+        Assert-True ($m.Groups[1].Value.Trim().Length -gt 0) "$($file.Name) has a How to review heading with nothing under it"
+    }
+}
 Write-Host 'claude plugin validate'
 
 $claude = Get-Command claude -ErrorAction SilentlyContinue
