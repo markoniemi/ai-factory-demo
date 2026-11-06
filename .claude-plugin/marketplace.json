@@ -9,7 +9,7 @@
     {
       "name": "task",
       "source": "./",
-      "description": "A backlog-to-branch task protocol, as three skills: /task:task, /task:next-task and /task:clean-tasks.",
+      "description": "A backlog-to-branch task protocol, as four skills: /task:init, /task:task, /task:next-task and /task:clean-tasks.",
       "category": "workflow"
     }
   ]

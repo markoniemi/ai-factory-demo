@@ -21,6 +21,7 @@ and `claude plugin validate .` checks the manifests.
 
 | Command | What it does |
 | :- | :- |
+| `/task:init` | Set `docs/tasks/` up in a project that has no backlog yet. Run it first; it changes nothing if the backlog is already there. |
 | `/task:task [name-of-task]` | Start, continue or finish the named task. With no name, states the protocol and lists the tasks. |
 | `/task:next-task` | Take the next open backlog entry: highest priority, then first in `Tasks.md`. |
 | `/task:clean-tasks` | Delete the `done` tasks and their backlog entries, one commit each. Only when you ask. |

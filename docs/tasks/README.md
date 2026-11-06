@@ -7,6 +7,8 @@ branch; the human verifies the plan, reads the diff and merges.
 * `Tasks.md` — the backlog: one heading per task idea.
 * `<slug>.md` — one file per task, with its status and its implementation plan.
 
+A project gets this directory, with `Tasks.md` and this file, from `/task:init`.
+
 The rules the AI follows are not in this directory: they come from the `task`
 plugin, as its `task` skill. **The rules live there, not here.** See the
 repository's top-level `README.md` for installing the plugin.

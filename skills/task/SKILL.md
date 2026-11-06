@@ -67,8 +67,9 @@ When the named task has no task file yet:
    pattern is always a legal git branch name, so nothing else has to be checked.
    When the check fails, do not invent a different slug: stop and ask the human to
    edit the heading.
-3. Write `docs/tasks/<slug>.md` with `id: <slug>` and `branch: task/<slug>`, and
-   take `status` and `priority` from the entry's brackets.
+3. Write `docs/tasks/<slug>.md` with `id: <slug>`, and `branch: task/<slug>` when
+   `create_branch` is on (see **Configuration**); leave `branch:` out when it is
+   off. Take `status` and `priority` from the entry's brackets.
 4. Copy the entry's explanation into the body as the task description. Do not write
    an implementation plan yet.
 5. Add a link to the task file as the first line under the entry's heading:

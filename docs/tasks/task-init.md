@@ -1,6 +1,6 @@
 ---
 id: task-init
-status: in_progress
+status: in_review
 priority: high
 ---
 
@@ -116,3 +116,30 @@ Added to `tests/Test-Plugin.ps1`:
 
 Nothing is open. The step list and the test list above stand, with that eighth
 case added.
+## Result
+
+All seven steps are done on `main`, with no branch: this project's
+`create_branch` is `false`, so this is the first task the protocol ran without
+one.
+
+* `tests/Test-Plugin.ps1`: **38 passed, 0 failed, 0 skipped** (was 30).
+* `claude plugin validate . --strict`: **passed**.
+* New files: `skills/init/SKILL.md`, `skills/init/templates/Tasks.md`,
+  `skills/init/templates/README.md`. Changed: `skills/task/SKILL.md` (step 3's
+  conditional `branch:`), `README.md` (the `/task:init` row),
+  `.claude-plugin/marketplace.json` (four skills, not three),
+  `docs/tasks/README.md` (where the directory comes from), and the tests.
+
+Three notes on what the plan did not foresee:
+
+* The backlog template carries two paragraphs the old header did not: what the
+  two configuration keys mean, and that a heading becomes the file and branch
+  name. Both are rules a human has to know before writing the first entry, and
+  `Tasks.md` is the file they will actually have open.
+* Two status descriptions had to lose the branch. `in_progress` said "on its
+  branch" and `done` said "merged and branch deleted", which is wrong in a project
+  configured the way this one now is; the template says "merged, or committed on
+  `main` when the project uses no branches".
+* The drift test compares the template against this project's own `Tasks.md` by
+  shared tokens, not by diff. A diff would fail on the first line of prose either
+  file improves, which would make the test a nuisance rather than a guard.

@@ -72,7 +72,7 @@ function Get-SkillFrontmatter {
     throw "skills/$SkillName/SKILL.md has no closing frontmatter delimiter"
 }
 
-$skillNames = @('task', 'next-task', 'clean-tasks')
+$skillNames = @('task', 'next-task', 'clean-tasks', 'init')
 
 Write-Host 'plugin manifest'
 
@@ -417,6 +417,87 @@ Test-Case 'this project states its own configuration' {
     foreach ($key in @('create_branch', 'create_pull_request')) {
         Assert-True ($config[$key] -is [bool]) "$key must be a boolean"
     }
+}
+
+Write-Host 'the init skill'
+
+function Get-TemplatePath {
+    param([string] $Name)
+
+    return (Join-Path $root "skills/init/templates/$Name")
+}
+
+Test-Case 'both templates exist' {
+    foreach ($name in @('Tasks.md', 'README.md')) {
+        Assert-True (Test-Path (Get-TemplatePath $name)) "skills/init/templates/$name is missing"
+    }
+}
+
+Test-Case 'the backlog template is a valid backlog' {
+    $text = Get-Content (Get-TemplatePath 'Tasks.md') -Raw
+    Assert-True ($text.TrimStart() -match '^---') 'the template must open with the configuration frontmatter'
+
+    $config = Get-TaskConfig $text
+    Assert-Equal $true $config['create_branch'] 'the template default for create_branch'
+    Assert-Equal $false $config['create_pull_request'] 'the template default for create_pull_request'
+
+    foreach ($status in @('draft', 'planning', 'planned', 'in_progress', 'in_review',
+                          'changes_requested', 'approved', 'done')) {
+        Assert-True ($text -match [regex]::Escape($status)) "the template must name the status '$status'"
+    }
+    foreach ($priority in @('high', 'medium', 'low')) {
+        Assert-True ($text -match [regex]::Escape($priority)) "the template must name the priority '$priority'"
+    }
+
+    Assert-True ($text -match '(?m)^##\s+Backlog\s*$') 'the template must have a Backlog heading'
+    $after = ($text -split '(?m)^##\s+Backlog\s*$')[1]
+    Assert-True (-not ($after -match '(?m)^###\s')) 'the template must hold no backlog entry'
+}
+
+Test-Case 'the template and this project do not drift' {
+    $template = Get-Content (Get-TemplatePath 'Tasks.md') -Raw
+    $mine = Get-Content (Join-Path $root 'docs/tasks/Tasks.md') -Raw
+
+    foreach ($shared in @('draft', 'planning', 'planned', 'in_progress', 'in_review',
+                          'changes_requested', 'approved', 'done',
+                          'create_branch', 'create_pull_request')) {
+        Assert-True ($template -match [regex]::Escape($shared)) "the template is missing '$shared'"
+        Assert-True ($mine -match [regex]::Escape($shared)) "this project's Tasks.md is missing '$shared'"
+    }
+    foreach ($text in @($template, $mine)) {
+        Assert-True ($text -match '(?m)^##\s+Backlog\s*$') 'both must have a Backlog heading'
+        Assert-True ($text -match 'Priorities') 'both must state the priorities'
+    }
+}
+
+Test-Case 'the README template points at the plugin, not at itself' {
+    $text = Get-Content (Get-TemplatePath 'README.md') -Raw
+    foreach ($rule in @('task', '/task:task', '/task:next-task', 'Tasks.md')) {
+        Assert-True ($text -match [regex]::Escape($rule)) "the README template must mention '$rule'"
+    }
+    Assert-True (-not ($text -match 'AGENTS\.md')) 'the README template must not mention AGENTS.md'
+}
+
+Test-Case 'the init skill states its two guards' {
+    $body = Get-Content (Join-Path $root 'skills/init/SKILL.md') -Raw
+    Assert-True ($body -match 'templates') 'the skill must copy the templates'
+    Assert-True ($body -match 'overwrite|change nothing|already exists') 'the skill must refuse to overwrite an existing Tasks.md'
+    Assert-True ($body -match 'task file') 'the skill must say it writes no task file'
+}
+
+Test-Case 'the plugin advertises four skills' {
+    $readme = Get-Content (Join-Path $root 'README.md') -Raw
+    Assert-True ($readme -match [regex]::Escape('/task:init')) 'README.md must list /task:init'
+
+    $marketplace = Get-JsonFile '.claude-plugin/marketplace.json'
+    Assert-True (-not ($marketplace.plugins[0].description -match 'three skills')) 'the marketplace entry still says three skills'
+}
+
+Test-Case 'the protocol makes branch: conditional when it creates a task' {
+    $body = Get-Content (Join-Path $root 'skills/task/SKILL.md') -Raw
+    $step = [regex]::Match($body, '(?s)3\. Write `docs/tasks/<slug>\.md`.*?\n\d\. ').Value
+    Assert-True ($step.Length -gt 0) 'the Creating a task step that writes the file was not found'
+    Assert-True ($step -match 'create_branch') 'that step must make branch: conditional on create_branch'
 }
 
 Write-Host 'claude plugin validate'

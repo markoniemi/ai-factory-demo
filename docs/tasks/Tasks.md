@@ -99,7 +99,7 @@ plan: [plugin-config.md](plugin-config.md)
   - create branch: true/false
   - create pull-request: true/false
 
-### task init [in_progress, high]
+### task init [in_review, high]
 
 plan: [task-init.md](task-init.md)
 
