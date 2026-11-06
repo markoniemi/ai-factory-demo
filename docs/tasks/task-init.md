@@ -1,6 +1,6 @@
 ---
 id: task-init
-status: planned
+status: in_progress
 priority: high
 ---
 
@@ -103,21 +103,16 @@ Added to `tests/Test-Plugin.ps1`:
 7. **The plugin advertises four skills.** `README.md`'s commands table lists
    `/task:init`, and the marketplace description no longer says three.
 
-## Open questions for the human
+## Answers from the human (2026-11-06)
 
-1. **Does `/task:init` write `docs/tasks/README.md` too?** The backlog entry asks
-   only for `Tasks.md`. The plan writes both, because a directory with one file and
-   no explanation is where the next person asks "what is this?". Say if you want
-   `Tasks.md` alone.
-2. **Interactive or defaults?** The plan writes the two configuration keys at
-   their defaults and tells the human where to change them. The alternative is for
-   the skill to ask both questions before writing. Defaults are the
-   recommendation: `/task:init` runs once, usually before anyone knows whether the
-   project wants branches.
-3. **A protocol inconsistency this task uncovered.** **Creating a task** step 3
-   still says to write `branch: task/<slug>` unconditionally, while **Task files**
-   says the key is left out when `create_branch` is off. The second is right, and
-   this task file follows it - it has no `branch:`. The fix is one clause in step
-   3. Take it here, since it is a one-line change in a file this task touches
-   anyway, or make it its own backlog entry if you would rather keep this task to
-   `init`.
+1. **Both files**: `/task:init` writes `docs/tasks/Tasks.md` and
+   `docs/tasks/README.md`.
+2. **Defaults**: the skill writes the two configuration keys at their defaults and
+   says where to change them. It asks nothing.
+3. **Fix the inconsistency here**: **Creating a task** step 3 gets the clause that
+   makes `branch:` conditional on `create_branch`, in this task. An eighth test
+   case covers it: the protocol must not tell the agent to write `branch:`
+   unconditionally.
+
+Nothing is open. The step list and the test list above stand, with that eighth
+case added.

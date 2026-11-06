@@ -99,7 +99,7 @@ plan: [plugin-config.md](plugin-config.md)
   - create branch: true/false
   - create pull-request: true/false
 
-### task init [planned, high]
+### task init [in_progress, high]
 
 plan: [task-init.md](task-init.md)
 
@@ -108,3 +108,9 @@ plan: [task-init.md](task-init.md)
 ### review instructions [draft, medium]
 
 - when implementation is done, add a short instructions on how to demonstrate new feature in ui or how to review the changes.
+
+### documentation [draft, low]
+
+- when /task:clean-tasks is run, documentation should be checked that it is up-to-date.
+- should task-plugin have documentation of it own? is readme enough?
+- clean-tasks should check that readmes, agents.md, use cases and possible other documentation is up-to-date.
