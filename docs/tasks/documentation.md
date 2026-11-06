@@ -147,11 +147,13 @@ documentation, so "it was already updated" was a habit rather than a rule, and
 
 Two sentences of prose and one test.
 
-* `skills/task/SKILL.md`, `planned` -> `in_progress`: the documentation a change
-  makes wrong is part of the implementation, updated in the same commits as the
-  code - the project's `README.md`, its instructions file, or this protocol when
-  the change is to the protocol. It says outright that no later step audits it and
-  that `clean-tasks` does not.
+* `skills/task/SKILL.md`, `planned` -> `in_progress`: the transition already said
+  the implementation is the code **and unit tests**, so the documentation the
+  change makes wrong joins that list, in both the branch and the no-branch
+  sentence, plus one short sentence that no later step audits it. It was a
+  four-line paragraph first; the human asked whether a clause in the existing
+  sentences would do, and it does. This file is read every turn, so prose that
+  earns nothing is a cost.
 * `skills/clean-tasks/SKILL.md`, step 1: keeping the documentation correct is not
   that skill's job. Its check stays what it was - that a rule is not lost together
   with the file holding it - and the sentence stops the question being reopened.

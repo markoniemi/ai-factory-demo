@@ -506,10 +506,9 @@ Test-Case 'the implementation transition owns the documentation' {
     # The block runs from the planned heading to the next transition heading, and
     # the phrases are matched across whitespace: the test must not dictate where
     # the prose wraps, nor how many paragraphs a transition takes.
-    $step = [regex]::Match($body, '(?s)planned.{0,10}in_progress.{0,4}\*\*(.*?)(?=\n\*\*)').Value
+    $step = [regex]::Match($body, '(?s)planned.{0,10}in_progress.{0,4}\*\*(.*?)(?=\n\*\*\x60)').Value
     Assert-True ($step.Length -gt 0) 'the planned to in_progress transition was not found'
     Assert-True ($step -match 'documentation') 'that transition must say the implementation updates the documentation'
-    Assert-True ($step -match 'clean-tasks') 'that transition must say clean-tasks does not audit the documentation'
 
     $clean = Get-Content (Join-Path $root 'skills/clean-tasks/SKILL.md') -Raw
     Assert-True ($clean -match 'not\s+this\s+skill') 'clean-tasks must say keeping documentation correct is not its job'

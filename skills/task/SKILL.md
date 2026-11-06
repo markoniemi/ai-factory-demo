@@ -147,14 +147,11 @@ file: the steps, and any open question a human must answer. Set `planned` and st
 a human verifies the plan.
 
 **`planned` → `in_progress`** — set `in_progress` and commit it on `main`. With
-`create_branch` on, create the branch named in `branch` and write the code **and
-unit tests** on it. With `create_branch` off, leave `branch:` out of the task
-file's frontmatter and commit the code and tests on `main`.
-
-The documentation the change makes wrong is part of the implementation: update it
-here, in the same commits as the code - the project's `README.md`, its
-instructions file, this protocol when the change is to the protocol. No later step
-audits it, and `clean-tasks` does not.
+`create_branch` on, create the branch named in `branch` and write the code, the
+**unit tests** and the documentation the change makes wrong on it. With
+`create_branch` off, leave `branch:` out of the task file's frontmatter and commit
+the code, the tests and the documentation on `main`. No later step audits the
+documentation.
 
 **`in_progress` → `in_review`** — the implementation is committed and ready to be
 read. With `create_pull_request` off, nothing is pushed and nothing is opened: set
