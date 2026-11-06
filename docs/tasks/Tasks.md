@@ -111,7 +111,9 @@ plan: [task-init.md](task-init.md)
 
 - when implementation is done, add a short instructions on how to demonstrate new feature in ui or how to review the changes.
 
-### documentation [planning, low]
+### documentation [planned, low]
+
+plan: [documentation.md](documentation.md)
 
 - when /task:clean-tasks is run, documentation should be checked that it is up-to-date.
 - should task-plugin have documentation of it own? is readme enough?
