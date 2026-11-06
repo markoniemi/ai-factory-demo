@@ -99,7 +99,9 @@ plan: [plugin-config.md](plugin-config.md)
   - create branch: true/false
   - create pull-request: true/false
 
-### task init [planning, high]
+### task init [planned, high]
+
+plan: [task-init.md](task-init.md)
 
 - create a /task:init that creates Tasks.md with header. 
 
