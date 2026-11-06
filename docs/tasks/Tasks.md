@@ -111,7 +111,7 @@ plan: [task-init.md](task-init.md)
 
 - when implementation is done, add a short instructions on how to demonstrate new feature in ui or how to review the changes.
 
-### documentation [planned, low]
+### documentation [done, low]
 
 plan: [documentation.md](documentation.md)
 

@@ -151,6 +151,11 @@ a human verifies the plan.
 unit tests** on it. With `create_branch` off, leave `branch:` out of the task
 file's frontmatter and commit the code and tests on `main`.
 
+The documentation the change makes wrong is part of the implementation: update it
+here, in the same commits as the code - the project's `README.md`, its
+instructions file, this protocol when the change is to the protocol. No later step
+audits it, and `clean-tasks` does not.
+
 **`in_progress` → `in_review`** — the implementation is committed and ready to be
 read. With `create_pull_request` off, nothing is pushed and nothing is opened: set
 `in_review`, and the human reads the branch, or the commits on `main` when there

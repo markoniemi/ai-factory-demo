@@ -500,6 +500,21 @@ Test-Case 'the protocol makes branch: conditional when it creates a task' {
     Assert-True ($step -match 'create_branch') 'that step must make branch: conditional on create_branch'
 }
 
+
+Test-Case 'the implementation transition owns the documentation' {
+    $body = (Get-Content (Join-Path $root 'skills/task/SKILL.md') -Raw) -replace "`r`n", "`n"
+    # The block runs from the planned heading to the next transition heading, and
+    # the phrases are matched across whitespace: the test must not dictate where
+    # the prose wraps, nor how many paragraphs a transition takes.
+    $step = [regex]::Match($body, '(?s)planned.{0,10}in_progress.{0,4}\*\*(.*?)(?=\n\*\*)').Value
+    Assert-True ($step.Length -gt 0) 'the planned to in_progress transition was not found'
+    Assert-True ($step -match 'documentation') 'that transition must say the implementation updates the documentation'
+    Assert-True ($step -match 'clean-tasks') 'that transition must say clean-tasks does not audit the documentation'
+
+    $clean = Get-Content (Join-Path $root 'skills/clean-tasks/SKILL.md') -Raw
+    Assert-True ($clean -match 'not\s+this\s+skill') 'clean-tasks must say keeping documentation correct is not its job'
+    Assert-True ($clean -match 'never\s+as\s+part\s+of\s+reaching') 'clean-tasks must keep its never-on-your-own guard'
+}
 Write-Host 'claude plugin validate'
 
 $claude = Get-Command claude -ErrorAction SilentlyContinue

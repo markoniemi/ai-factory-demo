@@ -18,6 +18,11 @@ Delete every `done` task, oldest first, **one commit per task**:
    the protocol, or the project's own `README.md` or instructions file if it changed
    the project. Write it there first if it is not. What only described how the work
    was carried out is not worth keeping.
+
+   Keeping the documentation correct is **not this skill's** job. The task that
+   changed the behaviour updated it while implementing it, as the protocol's
+   `planned` -> `in_progress` requires. This step only checks that a rule is not
+   lost together with the file that holds it.
 2. Delete the task file.
 3. Remove its whole entry from `Tasks.md`, heading and `plan:` line included.
 

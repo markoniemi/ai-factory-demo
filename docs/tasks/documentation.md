@@ -1,6 +1,6 @@
 ---
 id: documentation
-status: planned
+status: done
 priority: low
 ---
 
@@ -124,3 +124,47 @@ Test 5 is worth having regardless of the rest of this task.
 * `feature vs task` [planned, high] adds a `kind:` field, which the protocol, the
   README and the template `Tasks.md` all have to describe. Test 1 and test 4 above
   would catch it if one of the three were forgotten.
+## Decision from the human (2026-11-06)
+
+The plan's main change is **rejected**, and the rejection is the useful part of
+this task.
+
+> if task was planned an implemented correctly, then documentation was updated as
+> well. Cleaning tasks should not be responsible for updating docs.
+
+So documentation belongs to the task that changed the behaviour, written while the
+change is being written. `clean-tasks` gets no new check, and the four open
+questions above fall away with it: questions 2, 3 and 4 only existed to scope an
+audit that is not happening. Question 1 is answered by the recommendation it
+contained - the plugin keeps no documentation of its own.
+
+That rule was not written down anywhere. `planned` -> `in_progress` said the
+implementation is the code **and unit tests**, and said nothing about the
+documentation, so "it was already updated" was a habit rather than a rule, and
+`clean-tasks` looked like the only place the gap could be caught.
+
+## Result
+
+Two sentences of prose and one test.
+
+* `skills/task/SKILL.md`, `planned` -> `in_progress`: the documentation a change
+  makes wrong is part of the implementation, updated in the same commits as the
+  code - the project's `README.md`, its instructions file, or this protocol when
+  the change is to the protocol. It says outright that no later step audits it and
+  that `clean-tasks` does not.
+* `skills/clean-tasks/SKILL.md`, step 1: keeping the documentation correct is not
+  that skill's job. Its check stays what it was - that a rule is not lost together
+  with the file holding it - and the sentence stops the question being reopened.
+* `tests/Test-Plugin.ps1`: one case asserting both, so the rule cannot be edited
+  back out silently. **39 passed, 0 failed, 0 skipped**;
+  `claude plugin validate . --strict` passes.
+
+Not done, deliberately: the plan's five test cases. Four of them existed to guard
+an audit that was rejected. The fifth - every relative link in every `*.md`
+resolves to a file that exists - is worth having on its own, and it has nothing to
+do with documentation drift; it belongs in its own backlog entry, since
+`clean-tasks` deleting a file something still points at is the breakage it catches.
+
+The ladder was cut short at the human's word ("Set the task to done?"):
+`in_review` and `approved` were skipped, so these three commits were never read by
+anyone before reaching `done`.
