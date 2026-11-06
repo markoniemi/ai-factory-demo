@@ -1,5 +1,5 @@
 ---
-create_branch: true
+create_branch: false
 create_pull_request: false
 ---
 
@@ -89,7 +89,7 @@ plan: [task-011-task-id-name.md](task-011-task-id-name.md)
 - implementing tasks from tasks.md in same session is not perfect for token spending.
 - is it possible to use agents or somehow clear session for each task automatically?
 
-### plugin config [in_review, high]
+### plugin config [approved, high]
 
 plan: [plugin-config.md](plugin-config.md)
 
@@ -98,3 +98,11 @@ plan: [plugin-config.md](plugin-config.md)
 - config items:
   - create branch: true/false
   - create pull-request: true/false
+
+### task init [planning, high]
+
+- create a /task:init that creates Tasks.md with header. 
+
+### review instructions [draft, medium]
+
+- when implementation is done, add a short instructions on how to demonstrate new feature in ui or how to review the changes.
