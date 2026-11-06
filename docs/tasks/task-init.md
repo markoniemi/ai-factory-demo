@@ -1,6 +1,6 @@
 ---
 id: task-init
-status: in_review
+status: done
 priority: high
 ---
 
