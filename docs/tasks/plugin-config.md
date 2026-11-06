@@ -1,6 +1,6 @@
 ---
 id: plugin-config
-status: approved
+status: done
 priority: high
 branch: task/plugin-config
 ---
