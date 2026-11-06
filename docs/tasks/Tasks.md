@@ -67,7 +67,9 @@ plan: [task-008-superpowers-compatibility.md](task-008-superpowers-compatibility
 
 - using superpowers plugin, which likes to write plans in some place, should tasks be compatible with superpowers plugin?
 
-### feature vs task [planning, high]
+### feature vs task [planned, high]
+
+plan: [feature-vs-task.md](feature-vs-task.md)
 
 - how to create features and tasks from tasks.md? feature requires branch, possibly pr. task does not need plan and can be done directly on main.
 
