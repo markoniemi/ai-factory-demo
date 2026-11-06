@@ -1,6 +1,6 @@
 ---
 id: review-instructions
-status: planned
+status: in_progress
 priority: medium
 ---
 
@@ -116,3 +116,23 @@ survive (open question 5).
 `feature vs task` [planned, high] proposes a `chore` kind that may skip review
 entirely. If it does, a chore writes no review instructions either, and whichever
 task is implemented second has to say so.
+## Answers from the human (2026-11-06)
+
+1. Heading: `## How to review`.
+2. No, the section does not become the request's description. **The host** is
+   unchanged and `gh pr create --fill` stays.
+3. No backfill of existing task files.
+4. The question was misread as being about the reviewer, and the answer settles
+   that half: *"no need to verify if reviewer did anything. if user changes task to
+   approved, thats enough."* So nothing tracks whether the reviewer followed the
+   section, and `approved` is the whole signal - which is what the protocol already
+   did, now said out loud.
+
+   The half the question was actually about - whether the transition refuses to
+   complete until the agent has run the runnable steps - is dropped. No gate. The
+   rule that remains is a plain statement: write steps you have run, and say so
+   where you have not. That is honest without being machinery, which is what the
+   answer asked for.
+5. Nothing in the section survives `clean-tasks`. This needs no change:
+   `clean-tasks` already discards "what only described how the work was carried
+   out".
