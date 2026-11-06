@@ -107,7 +107,9 @@ plan: [task-init.md](task-init.md)
 
 - create a /task:init that creates Tasks.md with header. 
 
-### review instructions [planning, medium]
+### review instructions [planned, medium]
+
+plan: [review-instructions.md](review-instructions.md)
 
 - when implementation is done, add a short instructions on how to demonstrate new feature in ui or how to review the changes.
 
