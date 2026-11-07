@@ -52,11 +52,6 @@ branch: task/short-description
 * The task file is the source of truth for `status` and `priority`. The brackets in
   `Tasks.md` mirror it; keep them in step (see **Backlog mirror**).
 
-## Selection
-
-1. Scan the task files, as **Task files** above defines them.
-2. Keep the tasks whose `status` matches the one you were asked to process.
-3. Take `high` before `medium` before `low`; on a tie, the oldest file first.
 
 ## Kinds
 
@@ -84,13 +79,13 @@ Naming the branch is all a kind decides. Whether a plan is required is the
 * The prefix is matched case-insensitively, and `feature`, `bug` and `task` are
   the only three kinds. `hotfix` is not one: it names urgency, and nothing in this
   protocol acts on urgency.
-* **The prefix is stripped before the slug is derived.** `### feature: add a login
-  page` gives the slug `add-a-login-page` and the branch `feature/add-a-login-page`
-  — not `feature/feature-add-a-login-page`.
-* A word before a colon that is not one of the three kinds is part of the title.
-  `### fix: parser crash` is a `task` titled `fix: parser crash`, slug
-  `fix-parser-crash`. A colon in a title is ordinary English: do not guess at a
-  fourth kind, and do not stop to ask.
+* **The prefix is stripped before the slug is derived**, so the first example gives
+  the slug `add-a-login-page` and the branch `feature/add-a-login-page`, not
+  `feature/feature-add-a-login-page`.
+* A word before a colon that is not one of the three is part of the title:
+  `### fix: parser crash` is a `task` titled `fix: parser crash`. A colon in a
+  title is ordinary English — do not guess at a fourth kind, and do not stop to
+  ask.
 * The brackets stay `[<status>, <priority>]`. The kind never goes in them.
 * Every kind is reviewed by a human. **No kind skips `in_review`**, and every kind
   writes `## How to review` on the way there.
@@ -99,23 +94,22 @@ Naming the branch is all a kind decides. Whether a plan is required is the
 
 When the named task has no task file yet:
 
-1. Read the kind from the heading's prefix as **Kinds** describes, and take the
-   title to be the heading with that prefix removed.
-2. Derive the slug from the title: lower-case it, replace every run of characters
-   outside `a-z0-9` with a single `-`, then strip any leading and trailing `-`. So
+1. Read the kind and the title from the heading as **Kinds** describes, then derive
+   the slug from the title: lower-case it, replace every run of characters outside
+   `a-z0-9` with a single `-`, then strip any leading and trailing `-`. So
    `task id/name` gives `task-id-name`.
-3. Check the slug. It must match `^[a-z0-9][a-z0-9-]*[a-z0-9]$`, be at most 60
+2. Check the slug. It must match `^[a-z0-9][a-z0-9-]*[a-z0-9]$`, be at most 60
    characters long, and belong to no existing task file. A slug that matches that
    pattern is always a legal git branch name, so nothing else has to be checked.
    When the check fails, do not invent a different slug: stop and ask the human to
    edit the heading.
-4. Write `docs/tasks/<slug>.md` with `id: <slug>` and `kind: <kind>`, and
+3. Write `docs/tasks/<slug>.md` with `id: <slug>` and `kind: <kind>`, and
    `branch: <kind>/<slug>` when `create_branch` is on (see **Configuration**);
    leave `branch:` out when it is off. Take `status` and `priority` from the
    entry's brackets.
-5. Copy the entry's explanation into the body as the task description. Do not write
+4. Copy the entry's explanation into the body as the task description. Do not write
    an implementation plan yet.
-6. Add a link to the task file as the first line under the entry's heading:
+5. Add a link to the task file as the first line under the entry's heading:
    `file: [<slug>.md](<slug>.md)`. Leave the heading and its brackets as they are.
 
 For *the next task* rather than a named one, use the `next-task` skill.
@@ -163,10 +157,9 @@ An unknown key in that frontmatter is ignored. A value that is neither `true` no
 `false` is not guessed at: stop and ask the human to fix it. A frontmatter block
 that is not at the very top of `Tasks.md` is not configuration.
 
-Each key is a **ceiling, not a default**. `create_branch: false` means no task
-gets a branch, and nothing per task overrides that. `create_branch: true` only
-permits a branch; which work uses one is this protocol's decision. The same
-reading applies to `create_pull_request`.
+Each key is a **ceiling, not a default**: `false` takes the thing away from every
+task and nothing per task overrides it, and `true` only permits it — which work
+uses one is this protocol's decision.
 
 `create_pull_request: true` together with `create_branch: false` is a
 contradiction: there is no branch to open a request from. Report it and stop
@@ -181,19 +174,6 @@ create the branch named in `branch:`, switch to it, and commit there.
 A task that turns out to write no code — a decision record — therefore never
 creates a branch at all, and reaching `done` has nothing to merge. That is why
 `branch:` names a branch and **does not assert** that the branch exists.
-
-## The host, when requests are on
-
-Read the host from `git remote get-url origin`. A `github.com` remote uses `gh`,
-a GitLab remote uses `glab`; GitLab calls the request a merge request.
-
-| Host | Open the request | Check it is merged |
-| :- | :- | :- |
-| GitHub | `gh pr create --fill --base main --head <branch>` | `gh pr view <branch> --json state,mergedAt` |
-| GitLab | `glab mr create --fill --target-branch main --source-branch <branch>` | `glab mr view <branch> --output json` |
-
-The tool missing, or not authenticated: report it and stay where you are. Never
-fall back to a local merge to get around it.
 
 ## Transitions
 
@@ -226,8 +206,9 @@ with the plan section deleted, which this transition reads as a waiver.
 read. With `create_pull_request` off, nothing is pushed and nothing is opened: set
 `in_review`, and the human reads the branch, or the commits on `main` when there
 is no branch. With `create_pull_request` on, push the branch, open the request as
-**The host** above describes, add its URL to the task file as a `pr:` line under
-the frontmatter, and set `in_review`.
+`${CLAUDE_PLUGIN_ROOT}/skills/task/references/host.md` describes — read that file
+now — add its URL to the task file as a `pr:` line under the frontmatter, and set
+`in_review`.
 
 Either way, append a `## How to review` section to the task file first - a handful
 of steps in whichever of these shapes fits the change: how to reach the screen and
@@ -252,12 +233,10 @@ picks the new commits up when the branch is pushed.
   merge. Set `done` and mirror it.
 * A branch and no request: merge it into `main` (fast-forward), delete the branch,
   set `done`.
-* A request: the host merges it, not you. Check that it is merged as **The host**
-  above describes. Merged: delete the local branch and set `done`. Not merged yet:
-  say so and stop, because merging it is the human's.
-
-A task that wrote no code — a decision record, say — reaches `done` without a branch
-to merge: set the status and mirror it.
+* A request: the host merges it, not you. Check that it is merged as
+  `${CLAUDE_PLUGIN_ROOT}/skills/task/references/host.md` describes — read that
+  file now. Merged: delete the local branch and set `done`. Not merged yet: say so
+  and stop, because merging it is the human's.
 
 ## Cleaning up
 

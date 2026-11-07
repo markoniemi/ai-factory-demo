@@ -375,11 +375,43 @@ Test-Case 'the branch path survives the rewrite' {
 }
 
 Test-Case 'the request path names both hosts and their commands' {
+    # The request path is in a file the protocol names rather than in the protocol:
+    # create_pull_request is off by default, so those words are not worth reading on
+    # every invocation. Both are searched, or moving it would look like deleting it.
     $body = Get-Content (Join-Path $root 'skills/task/SKILL.md') -Raw
+    $referenced = Get-Content (Join-Path $root 'skills/task/references/host.md') -Raw
+    $both = $body + "`n" + $referenced
     foreach ($rule in @('gh pr create', 'gh pr view', 'glab mr create', 'glab mr view', 'origin')) {
-        Assert-True ($body -match [regex]::Escape($rule)) "the request path must name '$rule'"
+        Assert-True ($both -match [regex]::Escape($rule)) "the request path must name '$rule'"
     }
-    Assert-True (-not ($body -match 'uses no pull requests')) 'the "no pull requests" sentence must be gone'
+    Assert-True (-not ($both -match 'uses no pull requests')) 'the "no pull requests" sentence must be gone'
+}
+
+Test-Case 'both transitions that need the host file name it' {
+    # Moving the request path out is the one cut that could make the agent do less
+    # rather than say less: it only works if the transition that needs the file says
+    # so at the moment it needs it.
+    Assert-True (Test-Path (Join-Path $root 'skills/task/references/host.md')) 'skills/task/references/host.md is missing'
+    $body = (Get-Content (Join-Path $root 'skills/task/SKILL.md') -Raw) -replace "`r`n", "`n"
+    Assert-True (-not ($body -match '(?m)^##\s+The host')) 'the request path must not be back in the protocol'
+
+    foreach ($pair in @(@('in_progress', 'in_review'), @('approved', 'done'))) {
+        $pattern = '(?s)\n\*\*\x60' + $pair[0] + '.{0,30}' + $pair[1] + '(.*?)(?=\n\*\*\x60|\n##\s)'
+        $step = [regex]::Match($body, $pattern).Value
+        Assert-True ($step.Length -gt 0) "the $($pair[0]) to $($pair[1]) transition was not found"
+        Assert-True ($step -match 'references/host\.md') "the $($pair[0]) to $($pair[1]) transition must name references/host.md"
+    }
+}
+
+Test-Case 'the sections the other skills point at still exist' {
+    # Cutting prose is cheap to get wrong: these headings are referred to by name,
+    # from this file and from the other three skills.
+    $body = (Get-Content (Join-Path $root 'skills/task/SKILL.md') -Raw) -replace "`r`n", "`n"
+    foreach ($section in @('Task files', 'Kinds', 'Creating a task', 'Backlog mirror',
+                           'Configuration', 'Lazy branches', 'Transitions')) {
+        $found = $body -match ('(?m)^##\s+' + [regex]::Escape($section) + '\s*$')
+        Assert-True $found "the protocol lost its '$section' section"
+    }
 }
 
 Test-Case 'configuration is read from the frontmatter over the defaults' {
