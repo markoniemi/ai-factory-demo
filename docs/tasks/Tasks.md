@@ -32,7 +32,7 @@ Priorities: `high` | `medium` | `low`.
 ## Backlog
 
 
-### feature vs task [planned, high]
+### feature vs task [in_progress, high]
 
 plan: [feature-vs-task.md](feature-vs-task.md)
 

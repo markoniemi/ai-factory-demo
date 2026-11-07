@@ -1,6 +1,6 @@
 ---
 id: feature-vs-task
-status: planned
+status: in_progress
 priority: high
 ---
 
@@ -219,18 +219,17 @@ In `tests/Test-Plugin.ps1`:
 12. **No test asserts that a `planned` task has a plan section.** That invariant
     is deliberately gone; this is a note to whoever writes the tests, not a test.
 
-## Open questions for the human
+## Answered by the human, 2026-11-07
 
-1. **The `plan:` link is now misnamed.** Every entry with a task file gets
-   `plan: [<slug>.md](<slug>.md)` under its heading - including one that will never
-   have a plan. Rename it to `task:`, `file:` or `item:`? Cheap now, and it is the
-   line a human reads most.
-2. **Does the AI ever decline to skip a plan?** A human writing `planned` on a
-   `feature:` entry with ten bullets of description gets code with no plan. The
-   recommendation is yes, implement it - the human waived the gate on purpose and
-   second-guessing it reintroduces exactly the kind-decides-planning rule this
-   plan deleted. Confirm.
-3. **`in_review` for every kind?** Nothing above lets any kind skip review, since
-   it is the gate that reads the code. A one-line `task` still gets a
-   `## How to review` section. Confirm, or let a `task` go `in_progress` ->
-   `approved`.
+1. **The entry link is renamed `file:`.** `plan: [<slug>.md](<slug>.md)` becomes
+   `file: [<slug>.md](<slug>.md)`, because the link points at the task file and an
+   entry may never have a plan. Every skill that writes, reads or deletes that
+   line changes with it, and the two entries in this backlog are migrated.
+2. **`planned` means implement.** A human who writes `planned` on a `feature:`
+   entry with ten bullets of description gets code and no plan. The AI does not
+   second-guess the waiver; doing so would reintroduce the kind-decides-planning
+   rule this plan deleted.
+3. **Human review is always needed.** No kind skips `in_review`, and every kind
+   writes `## How to review` on the way there. It is the gate that reads the code.
+
+No open questions remain.
