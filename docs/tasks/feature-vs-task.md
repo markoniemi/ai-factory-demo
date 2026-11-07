@@ -1,6 +1,6 @@
 ---
 id: feature-vs-task
-status: in_progress
+status: in_review
 priority: high
 ---
 
@@ -233,3 +233,46 @@ In `tests/Test-Plugin.ps1`:
    writes `## How to review` on the way there. It is the gate that reads the code.
 
 No open questions remain.
+
+## Result
+
+Implemented on `main`, since this project has `create_branch: false`. Commit
+`5cb5769`, eight files.
+
+* `skills/task/SKILL.md` gained `## Kinds` and `## Lazy branches`; **Creating a
+  task** grew a step for reading the prefix and renumbered; `draft` now has two
+  routes; `planned` -> `in_progress` reads whether a plan section is there; the
+  frontmatter gained `kind:` and the `branch:` bullet was rewritten.
+* `skills/next-task/SKILL.md`, `skills/clean-tasks/SKILL.md`,
+  `skills/init/templates/Tasks.md`, `README.md`, `docs/tasks/README.md` and
+  `docs/tasks/Tasks.md` follow, including the `plan:` -> `file:` rename.
+* `tests/Test-Plugin.ps1`: 41 cases -> 55.
+
+Two things the plan did not foresee:
+
+* The existing case *the protocol makes branch: conditional when it creates a
+  task* anchored on the literal step number `3.`, which inserting a step above it
+  broke. The regex now accepts any digit. Same class of mistake as the earlier
+  tests that read where the prose wrapped.
+* The parsing cases pass the moment they are written, because the helper they call
+  **is** the executable form of the rule - there is no product code for them to be
+  red against. They still earn their keep as the place the rule is written
+  unambiguously, and the prose cases are the ones that went red.
+
+## How to review
+
+1. `powershell -File tests/Test-Plugin.ps1` - expect `passed 55, failed 0,
+   skipped 0`. On the commit before the implementation it reported `failed 7`: the
+   seven prose cases, which is what red looked like.
+2. `claude plugin validate . --strict` - expect `Validation passed`, with one
+   `ICON_MISSING` warning that predates this task.
+3. Read `skills/task/SKILL.md` `## Kinds`, then `## Lazy branches`, then the
+   `draft` and `planned` -> `in_progress` transitions, in that order. Those four
+   blocks are the whole behaviour change; everything else follows them.
+4. Check the rename took: `git grep -n "plan:" -- skills docs README.md` returns
+   only prose inside this file, where it is quoted history.
+5. Nothing was run against a live project. `/task:init` into an empty repository,
+   and a task created from a `feature:` heading, were **not** exercised. This
+   repository is the only project the change has been read against, and its
+   `create_branch: false` means the branch paths in `## Lazy branches` were
+   written but never executed.
