@@ -1,6 +1,6 @@
 ---
 id: reduce-readme-and-skills
-status: planned
+status: in_progress
 priority: low
 kind: task
 ---
