@@ -95,8 +95,8 @@ In `tests/Test-Plugin.ps1`, extending the bracket helpers already there:
    parses and yields the default kind.
 2. A third field that is not a known kind makes the parser throw, so the protocol's
    "stop and ask" has something to stand on.
-3. Every existing task file still parses with no `kind:` key - the numbered files
-   and the slug-named ones alike are grandfathered.
+3. Every existing task file still parses with no `kind:` key, so a task written
+   before this change keeps working.
 4. The protocol names both kinds, and states for each whether a plan is required.
 5. The template `Tasks.md` documents the third field and the default.
 6. Every `Tasks.md` entry whose brackets name a kind matches its task file's

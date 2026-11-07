@@ -281,17 +281,13 @@ Test-Case 'every task file states id, status, priority and branch' {
     }
 }
 
-Test-Case 'every task id is its file name, or a legacy numbered id' {
+Test-Case 'every task id is its file name' {
     foreach ($file in (Get-TaskFiles)) {
         $fm = Get-Frontmatter $file.FullName
         $id = $fm['id']
-        if ($id -cmatch '^task-\d{3}$') {
-            Assert-True ($file.BaseName.StartsWith($id)) "$($file.Name) is not named for its legacy id '$id'"
-        }
-        else {
-            Assert-Equal $file.BaseName $id "$($file.Name): id must equal the file name"
-            Assert-True (Test-TaskSlug $id) "$($file.Name): id '$id' does not match the slug rule"
-        }
+        Assert-Equal $file.BaseName $id "$($file.Name): id must equal the file name"
+        Assert-True (Test-TaskSlug $id) "$($file.Name): id '$id' does not match the slug rule"
+        Assert-True (-not ($id -cmatch '^task-\d{3}$')) "$($file.Name): the numbered scheme is gone, id '$id' revives it"
     }
 }
 

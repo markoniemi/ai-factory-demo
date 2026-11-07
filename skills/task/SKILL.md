@@ -30,9 +30,6 @@ and list the tasks with their statuses, and ask which one to take.
 * A task is a file `docs/tasks/<slug>.md`, where `<slug>` is the slug of its
   backlog heading, derived as **Creating a task** below describes. The task files
   are every `*.md` in `docs/tasks/` except `README.md` and `Tasks.md`.
-* A task file left over from the numbered scheme, such as
-  `task-007-clean-tasks.md` with `id: task-007`, keeps its name and its id. Read it
-  and work it as it stands; only new tasks are named by slug.
 * Every task file starts with this frontmatter:
 
 ```yaml
