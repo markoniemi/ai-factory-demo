@@ -61,7 +61,9 @@ file: [task-plugin-vs-https-backlog-so.md](task-plugin-vs-https-backlog-so.md)
 - does it overlap with task-plugin?
 - should i rename task-plugin to backlog-plugin? then naming backlog items as task and feature and epic would be no problem.
 
-### reduce readme and skills [planning, low]
+### reduce readme and skills [planned, low]
+
+file: [reduce-readme-and-skills.md](reduce-readme-and-skills.md)
 
 - has skill files or readme grown during edits? Is it possible to reduce text? Can the text be less verbose?
 - 
