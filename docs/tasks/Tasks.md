@@ -53,11 +53,5 @@ plan: [use-agents.md](use-agents.md)
 - implementing tasks from tasks.md in same session is not perfect for token spending.
 - is it possible to use agents or somehow clear session for each task automatically?
 
-### review instructions [done, medium]
-
-plan: [review-instructions.md](review-instructions.md)
-
-- when implementation is done, add a short instructions on how to demonstrate new feature in ui or how to review the changes.
-
 ### github build [draft, low]
 
