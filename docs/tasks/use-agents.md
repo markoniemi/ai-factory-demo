@@ -1,6 +1,6 @@
 ---
 id: use-agents
-status: planned
+status: done
 priority: high
 ---
 
@@ -174,3 +174,36 @@ In `tests/Test-Plugin.ps1`:
 skips planning entirely, which is exactly the shape of work worth delegating. If
 both are implemented, whichever is second decides whether a chore is delegated
 whole, gates and all.
+## Decision from the human (2026-11-07)
+
+> so lets not do agents, close the task
+
+Closed without implementation. Open question 1 was the load-bearing one - whether
+to split `skills/task/SKILL.md` into a thin dispatcher and a separate protocol body
+- and the answer is no, so there is nothing left worth building. An agent without
+that split reads the protocol a second time in its own window while the main thread
+has already paid for it, which raises the total spend to fix a problem about spend.
+Questions 2 through 5 only existed inside the design that was declined.
+
+## Result
+
+No code. No `agents/` directory, no third configuration key, no change to any
+skill, and the protocol is untouched - tasks keep running in the session that asks
+for them.
+
+What the task produced is the two findings above the open questions, and they are
+the reason to keep this file until someone deliberately discards it:
+
+* A session cannot clear itself. No skill, hook or plugin can clear the context it
+  runs in, so "clear the session per task" is not available at any price. The
+  alternatives are a subagent or `claude -p` from outside Claude Code, and the
+  second cannot ask a human anything, which this protocol needs at four points.
+* Delegating does not reduce total tokens. It stops the main thread growing, which
+  buys more tasks per session rather than cheaper tasks. Anyone reopening this
+  should start from that distinction, because the entry asked about spending and
+  the honest answer is that delegation does not lower it.
+
+Neither finding is a rule, so neither belongs in the protocol, and under the
+`documentation` task's decision nothing had to be written anywhere else. That does
+mean `clean-tasks` deleting this file is the point where the reasoning is lost -
+worth a moment's thought then, not a copy of it somewhere now.
