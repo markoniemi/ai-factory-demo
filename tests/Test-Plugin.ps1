@@ -741,6 +741,47 @@ Test-Case 'the backlog template documents the kinds and the plan-skipping route'
     Assert-True ($text -match 'no\s+prefix') 'the template must state the default kind'
     Assert-True ($text -match 'with\s+no\s+plan') 'the template must say planned with no plan means implement it'
 }
+Write-Host 'the GitHub build'
+
+$script:WorkflowPath = '.github/workflows/build.yml'
+
+Test-Case 'a workflow runs the unit tests on a Windows runner' {
+    $path = Join-Path $root $script:WorkflowPath
+    Assert-True (Test-Path $path) "$script:WorkflowPath is missing"
+    $text = (Get-Content $path -Raw) -replace "`r`n", "`n"
+
+    Assert-True ($text -match '(?m)^on:') 'the workflow must state its triggers'
+    Assert-True ($text -match 'push') 'the workflow must run on push'
+    Assert-True ($text -match 'pull_request') 'the workflow must run on pull requests'
+    Assert-True ($text -match 'actions/checkout@v\d+') 'the workflow must check the repository out'
+    Assert-True ($text -match [regex]::Escape('tests/Test-Plugin.ps1')) 'the workflow must run the test script'
+}
+
+Test-Case 'the suite is never run on a runner that cannot run it' {
+    # Test-Plugin.ps1 is Windows PowerShell: here-strings, powershell.exe, CRLF.
+    $text = (Get-Content (Join-Path $root $script:WorkflowPath) -Raw) -replace "`r`n", "`n"
+    Assert-True ($text -match 'runs-on:\s*windows-') 'the job must run on a Windows runner'
+    Assert-True (-not ($text -match 'ubuntu|macos')) 'no job may run the suite on a non-Windows runner'
+    Assert-True ($text -match 'powershell') 'the workflow must invoke Windows PowerShell by name'
+}
+
+Test-Case 'the workflow needs nothing the runner does not have' {
+    # The suite skips the validate case when the claude CLI is absent, so the
+    # workflow must not depend on it: installing and authenticating that CLI is
+    # its own task, not part of a build. A comment may name it; a step may not,
+    # so the comments are dropped before looking.
+    $lines = @((Get-Content (Join-Path $root $script:WorkflowPath)) |
+        Where-Object { $_ -notmatch '^\s*#' })
+    $live = $lines -join "`n"
+    Assert-True (-not ($live -match 'claude')) 'no step may invoke the claude CLI'
+    Assert-True (-not ($live -match 'npm|pip|choco')) 'the workflow must install nothing to run the suite'
+}
+
+Test-Case 'the README says the tests also run in CI' {
+    $readme = Get-Content (Join-Path $root 'README.md') -Raw
+    Assert-True ($readme -match [regex]::Escape('tests/Test-Plugin.ps1')) 'README.md must document the test command'
+    Assert-True ($readme -match [regex]::Escape($script:WorkflowPath)) "README.md must name $script:WorkflowPath"
+}
 Write-Host 'claude plugin validate'
 
 $claude = Get-Command claude -ErrorAction SilentlyContinue

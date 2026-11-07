@@ -103,6 +103,11 @@ Plain PowerShell, no Pester. It checks the two manifests, the four skills'
 frontmatter, that the protocol's statuses and rules survived, that no `AGENTS.md` is
 left behind, and that `claude plugin validate` passes.
 
+The same command runs on every push and pull request, from
+`.github/workflows/build.yml`, on a Windows runner because the suite is Windows
+PowerShell 5.1. The build installs nothing: the `claude plugin validate` case
+skips itself when the CLI is absent, which on a runner it is.
+
 ## Decisions
 
 Three decisions taken after the work had been planned out, so the reasoning is

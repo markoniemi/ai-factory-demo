@@ -1,0 +1,24 @@
+name: build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    name: unit tests
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # The suite is Windows PowerShell 5.1, which is what the protocol targets:
+      # here-strings, CRLF files, no pipeline chain operators. cmd invokes exactly
+      # the interpreter the README documents, rather than the runner's default
+      # pwsh 7. The script exits non-zero on any failure, which fails the step.
+      #
+      # Nothing is installed. The one case needing the claude CLI skips itself
+      # when the CLI is absent, so the build stays a build.
+      - name: Unit tests
+        shell: cmd
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File tests/Test-Plugin.ps1
