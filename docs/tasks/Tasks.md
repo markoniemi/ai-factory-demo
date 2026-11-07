@@ -46,12 +46,5 @@ plan: [feature-vs-task.md](feature-vs-task.md)
 
 - when tasks workflow and plugin/skill implementation, a powerpoint presentation would be nice
 
-### use agents [done, high]
-
-plan: [use-agents.md](use-agents.md)
-
-- implementing tasks from tasks.md in same session is not perfect for token spending.
-- is it possible to use agents or somehow clear session for each task automatically?
-
 ### github build [draft, low]
 
