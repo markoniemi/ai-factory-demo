@@ -107,7 +107,7 @@ plan: [task-init.md](task-init.md)
 
 - create a /task:init that creates Tasks.md with header. 
 
-### review instructions [in_review, medium]
+### review instructions [done, medium]
 
 plan: [review-instructions.md](review-instructions.md)
 

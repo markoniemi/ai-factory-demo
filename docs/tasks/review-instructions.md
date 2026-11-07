@@ -1,6 +1,6 @@
 ---
 id: review-instructions
-status: in_review
+status: done
 priority: medium
 ---
 
