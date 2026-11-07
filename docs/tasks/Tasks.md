@@ -86,7 +86,9 @@ plan: [task-011-task-id-name.md](task-011-task-id-name.md)
 - what if id was based on task heading, and human promises to make simple task headings
 - should the be a check that heading task can be used as git branch name?
 
-### use agents [planning, high]
+### use agents [planned, high]
+
+plan: [use-agents.md](use-agents.md)
 
 - implementing tasks from tasks.md in same session is not perfect for token spending.
 - is it possible to use agents or somehow clear session for each task automatically?
