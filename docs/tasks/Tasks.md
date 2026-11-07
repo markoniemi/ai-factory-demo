@@ -53,3 +53,4 @@ plan: [task-plugin-vs-https-backlog-so.md](task-plugin-vs-https-backlog-so.md)
 - how does backlog.so work? is it free?
 - does it overlap with task-plugin?
 - should i rename task-plugin to backlog-plugin? then naming backlog items as task and feature and epic would be no problem.
+
