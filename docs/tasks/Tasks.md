@@ -38,6 +38,7 @@ plan: [feature-vs-task.md](feature-vs-task.md)
 
 - how to create features and tasks from tasks.md? feature requires branch, possibly pr. task does not need plan and can be done directly on main.
 - merged in from *tasks branch name*: how should tasks.md state what kind of branch is needed (bug/feature/hotfix), and how is the AI told not to use a branch at all?
+- add task type to heading, ### feature: feature-name, or ### bug: bug-name, or ### task: task-name. Default to task. Branch name is taken from task type.
 
 ### powerpoint presentation [draft, low]
 
