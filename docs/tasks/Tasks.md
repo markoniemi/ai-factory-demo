@@ -45,7 +45,7 @@ plan: [feature-vs-task.md](feature-vs-task.md)
 
 ### github build [draft, low]
 
-### task plugin vs https://backlog.so/ [planned, high]
+### task plugin vs https://backlog.so/ [done, high]
 
 plan: [task-plugin-vs-https-backlog-so.md](task-plugin-vs-https-backlog-so.md)
 

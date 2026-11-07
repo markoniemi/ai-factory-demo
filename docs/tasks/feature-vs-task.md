@@ -186,7 +186,9 @@ its old open question 4 is answered and gone.
    everything to remember.
 2. **Names.** `chore` for the no-plan-no-branch kind - or `task`, accepting that
    "the task file" then stops saying which kind it holds. The plugin itself is
-   called `task`, which is what makes that word expensive here.
+   called `task`, which is what makes that word expensive here. The way out is
+   closed: *task plugin vs backlog.so* settled on 2026-11-07 that the plugin keeps
+   its name, so naming a kind `task` now pays that ambiguity for good.
 3. **The plan-but-no-branch kind.** *use agents* and *tasks as plugin vs skill*
    were both exactly this: a plan, a decision, no code. Does it get a name of its
    own - `decision`, `research`, `spike` - or does a `feature` that turns out to

@@ -96,8 +96,8 @@ left behind, and that `claude plugin validate` passes.
 
 ## Decisions
 
-Two things this plugin deliberately does not do. Both were decided after the work
-was planned out, so the reasoning is worth more than the conclusion.
+Three decisions taken after the work had been planned out, so the reasoning is
+worth more than the conclusion.
 
 **No documentation of its own.** `skills/task/SKILL.md` is the single source of
 truth, this file explains the plugin to a human, and `skills/init/templates/` is
@@ -112,6 +112,27 @@ like: `/task:task` injects the whole protocol into the session before any delega
 could happen, so the agent reads it a second time and the total spend rises.
 Delegation buys more tasks per session, not cheaper tasks. Reopening this means
 first splitting the protocol out of the skill a human invokes.
+
+If parallel agents are ever genuinely wanted, the answer is not to grow them here.
+[`backlog.so`](https://backlog.so/) (`osmove/backlog`, Apache-2.0) is this same
+decision taken the other way, with the machinery that makes it safe: exclusive
+file-scope claims, a git worktree per sub-task, a pre-commit hook that refuses a
+commit no claim covers, and a scheduler that recovers crashed runs. A plugin made
+of prose cannot have any of that.
+
+**Keeps the name `task`.** Renaming to `backlog` would free the word `task` to
+name a *kind* of work, which is the one real argument for it. It was declined:
+"Backlog" already names three shipped products - `backlog.so`, Backlog.md and
+Nulab's Backlog - and the npm name is taken, so the rename buys a crowded,
+less searchable name. The repository name is also the marketplace address, so a
+rename breaks `/plugin marketplace add markoniemi/task-plugin` and every install.
+The vocabulary collision is paid in the kind names instead.
+
+Worth knowing while comparing: [Backlog.md](https://github.com/MrLesk/Backlog.md)
+keeps markdown tasks in the repository much as this does, and arrived
+independently at the same three human checkpoints - review the spec, review the
+plan, review the code. It differs in being a binary to install, with a kanban UI
+and an MCP server, where this is prose a skill injects.
 
 ## This repository's own backlog
 

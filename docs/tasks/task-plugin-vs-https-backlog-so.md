@@ -1,6 +1,6 @@
 ---
 id: task-plugin-vs-https-backlog-so
-status: planned
+status: done
 priority: high
 ---
 
@@ -197,3 +197,23 @@ means picking `chore`, then renaming, then wishing the small kind were `task`.
 6. **Should anything be taken from Backlog.md** - an MCP server instead of an
    injected skill, `--json` output, the archive step - or is "nothing to install"
    the whole point of this plugin?
+
+## Result
+
+The human answered on 2026-11-07: **keep the name `task-plugin`, close the task.**
+That is open question 1 as a decision record and open question 2 as "keep `task`",
+and it makes 3, 4 and 5 moot - nothing moves, `epic` is not in scope, and there is
+no ordering problem left. Open question 6 was not answered and is not open work:
+nothing here waits on it.
+
+No code changed. What survives this file:
+
+* `README.md` `## Decisions` gained **Keeps the name `task`** with the reasoning,
+  a pointer from **No subagent per task** to `backlog.so` as that decision taken
+  the other way, and the note that Backlog.md reached the same three human
+  checkpoints independently.
+* `feature-vs-task.md` open question 2 records that the escape route is closed.
+
+There was nothing to review, so this went from `planned` to `done` without a
+`## How to review` section: the decision was the human's own, and the status
+reaching `done` records it.
