@@ -111,7 +111,7 @@ CLI is absent, which on a runner it is.
 
 ## Decisions
 
-Four decisions taken after the work had been planned out, so the reasoning is
+Five decisions taken after the work had been planned out, so the reasoning is
 worth more than the conclusion.
 
 **No documentation of its own.** `skills/task/SKILL.md` is the single source of
@@ -157,6 +157,16 @@ is, where the brackets hold what changes as it moves, so putting it there would
 have been the wrong home. A prefix also stays out of the file and branch names - it
 is stripped before the slug is derived - and reads as part of the sentence a human
 is writing anyway.
+
+**Prose length is a cost, and an uneven one.** `skills/task/SKILL.md` is read on
+every invocation, and the other three skills open by telling the agent to read it,
+so every word in it is paid again each time. These two `README.md` files are read
+by people, rarely, and their cost is drift instead - several files tell the
+configuration story and only `tests/Test-Plugin.ps1` keeps them in step. So
+shrinking the protocol buys tokens and de-duplicating the READMEs buys correctness,
+and they are not the same job. When shortening either, **cut duplication, not
+explanation**: the sentences giving reasons are there because the bare rule was
+misapplied first.
 
 ## This repository's own backlog
 

@@ -41,9 +41,4 @@ Priorities: `high` | `medium` | `low`.
 - when tasks workflow and plugin/skill implementation, a powerpoint presentation would be nice
 
 
-### reduce readme and skills [done, low]
-
-file: [reduce-readme-and-skills.md](reduce-readme-and-skills.md)
-
-- has skill files or readme grown during edits? Is it possible to reduce text? Can the text be less verbose?
-- 
+ 

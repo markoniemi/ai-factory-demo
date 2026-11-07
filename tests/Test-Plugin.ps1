@@ -260,8 +260,11 @@ Test-Case 'the protocol states which files are task files' {
 }
 
 Test-Case 'every task file states id, status, priority and branch' {
+    # An empty task directory is a legal state, and this assertion used to deny it:
+    # every task may have been cleaned, leaving a backlog of drafts and no task
+    # file at all. What must hold is that each file present carries the keys.
+    Assert-True (Test-Path (Join-Path $root 'docs/tasks')) 'docs/tasks is missing'
     $files = Get-TaskFiles
-    Assert-True ($files.Count -gt 0) 'docs/tasks holds no task files'
 
     # branch: is there only when the project permits a branch per task.
     $keys = @('id', 'status', 'priority')
