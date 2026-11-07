@@ -24,7 +24,7 @@ Delete every `done` task, oldest first, **one commit per task**:
    `planned` -> `in_progress` requires. This step only checks that a rule is not
    lost together with the file that holds it.
 2. Delete the task file.
-3. Remove its whole entry from `Tasks.md`, heading and `plan:` line included.
+3. Remove its whole entry from `Tasks.md`, heading and `file:` line included.
 
 Nothing of a `done` task stays in the task directory except what it changed. The
 plans stay in git history: `git log --diff-filter=D -- docs/tasks/` finds them.

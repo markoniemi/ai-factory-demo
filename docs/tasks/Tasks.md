@@ -9,16 +9,20 @@ Inbox for new tasks. A human adds an entry; the AI turns it into a task file. Se
 `README.md` for how. The rules come from the `task` plugin, not from this
 directory.
 
-Entry format — `### <short title> [<status>, <priority>]` plus a short explanation.
-Once the AI has created the task file, it adds a `plan: <link>` line under the
-heading and keeps the brackets up to date as the status changes. An entry is removed
-when its task is cleaned, so this file shows open work only.
+Entry format — `### [<kind>: ]<short title> [<status>, <priority>]` plus a short
+explanation. Once the AI has created the task file, it adds a `file: <link>` line
+under the heading and keeps the brackets up to date as the status changes. An entry
+is removed when its task is cleaned, so this file shows open work only.
+
+Kinds are `feature:`, `bug:` and `task:`, written before the title, and they decide
+what the branch is called and nothing else. No prefix means `task`.
 
 Statuses:
 
 * `draft` — written down, not planned yet.
 * `planning` — a human asked the AI to plan it.
-* `planned` — plan written, waiting for a human to verify it.
+* `planned` — cleared to implement: a plan written and waiting for a human to
+  verify it, or set by a human **with no plan** in the task file, which waives it.
 * `in_progress` — the AI is implementing it on its branch.
 * `in_review` — implementation ready on the branch, waiting for review.
 * `changes_requested` — review asked for changes.
@@ -32,9 +36,9 @@ Priorities: `high` | `medium` | `low`.
 ## Backlog
 
 
-### feature vs task [in_progress, high]
+### feature vs task [planned, high]
 
-plan: [feature-vs-task.md](feature-vs-task.md)
+file: [feature-vs-task.md](feature-vs-task.md)
 
 - how to create features and tasks from tasks.md? feature requires branch, possibly pr. task does not need plan and can be done directly on main.
 - merged in from *tasks branch name*: how should tasks.md state what kind of branch is needed (bug/feature/hotfix), and how is the AI told not to use a branch at all?
@@ -48,9 +52,13 @@ plan: [feature-vs-task.md](feature-vs-task.md)
 
 ### task plugin vs https://backlog.so/ [done, high]
 
-plan: [task-plugin-vs-https-backlog-so.md](task-plugin-vs-https-backlog-so.md)
+file: [task-plugin-vs-https-backlog-so.md](task-plugin-vs-https-backlog-so.md)
 
 - how does backlog.so work? is it free?
 - does it overlap with task-plugin?
 - should i rename task-plugin to backlog-plugin? then naming backlog items as task and feature and epic would be no problem.
 
+### reduce readme and skills [planning, low]
+
+- has skill files or readme grown during edits? Is it possible to reduce text? Can the text be less verbose?
+- 

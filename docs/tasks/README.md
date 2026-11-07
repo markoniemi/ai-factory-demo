@@ -35,9 +35,9 @@ name — `/task:task move Tasks to docs/tasks` — or to take the next one —
 keeps the brackets up to date from then on:
 
 ```markdown
-### move Tasks to docs/tasks [done, high]
+### feature: move Tasks to docs/tasks [done, high]
 
-plan: [move-tasks-to-docs-tasks.md](move-tasks-to-docs-tasks.md)
+file: [move-tasks-to-docs-tasks.md](move-tasks-to-docs-tasks.md)
 
 Move the task directory from `Tasks/` to `docs/tasks/` so all documentation
 lives under `docs/`.
@@ -45,6 +45,26 @@ lives under `docs/`.
 
 Edit the brackets yourself to re-prioritise a task or to ask for planning; the AI
 reads the change back into the task file.
+
+## Kinds
+
+A word before a colon in the heading says what kind of work it is:
+
+| Kind | Branch |
+| :- | :- |
+| `feature:` | `feature/<slug>` |
+| `bug:` | `bug/<slug>` |
+| `task:` | `task/<slug>` |
+
+**No prefix means `task`.** The prefix is dropped before the file name is made, so
+`feature: move Tasks to docs/tasks` still gives `move-tasks-to-docs-tasks.md`. A
+word before a colon that is not one of the three — `fix: parser crash` — is just
+part of the title.
+
+Naming the branch is all a kind does. It does not decide whether there is a plan,
+and it does not decide whether there is a branch at all: that is `create_branch`
+below. The branch itself is created at the first commit, so a task that writes no
+code never makes one.
 
 ## Configuration
 
@@ -82,6 +102,13 @@ Tasks.md entry ──► draft ──► planning ──► planned ──► in
 A **human** moves `draft` → `planning`, verifies the plan at `planned`, reviews the
 branch diff at `in_review`, and merges at `approved`. The AI does the rest. The
 plugin's `task` skill is what it does in each step.
+
+**Skipping the plan.** The status decides whether there is one, not the kind. Move
+`draft` → `planning` to ask for a plan; move `draft` → `planned` yourself, leaving
+the task file with no plan in it, and the AI treats that as a waiver and goes
+straight to the code. `planned` means cleared to implement either way. To reject a
+plan, set `planning` again or `draft` — never delete the plan and leave `planned`,
+which reads as a waiver. Review at `in_review` is yours for every kind.
 
 At `in_review` the task file carries a `## How to review` section: a few steps for
 seeing the change work, written by whoever implemented it. Start there rather than

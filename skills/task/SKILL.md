@@ -16,8 +16,9 @@ and list the tasks with their statuses, and ask which one to take.
 
 ## Starting from the task name
 
-1. Find the task. Match `$ARGUMENTS` against the headings in `Tasks.md` and against
-   the task file names, case-insensitively; a partial match is enough when it is
+1. Find the task. Match `$ARGUMENTS` against the headings in `Tasks.md` — both
+   whole and with the kind prefix stripped (see **Kinds**) — and against the task
+   file names, case-insensitively; a partial match is enough when it is
    unambiguous. Two candidates → ask which one.
 2. No task file yet → create it as **Creating a task** below describes, then
    continue.
@@ -37,12 +38,17 @@ and list the tasks with their statuses, and ask which one to take.
 id: short-description
 status: draft | planning | planned | in_progress | in_review | changes_requested | approved | done
 priority: high | medium | low
+kind: feature | bug | task
 branch: task/short-description
 ---
 ```
 
-* `branch:` is there when the task has a branch. With `create_branch` off (see
-  **Configuration**) the task has none, and the key is left out.
+* `kind:` is the kind the heading's prefix names (see **Kinds**). No `kind:` key
+  means `task`, so a task file written before kinds existed still reads correctly.
+* `branch:` is there when `create_branch` permits a branch (see
+  **Configuration**), and it always reads `<kind>/<id>`. The key **names** the
+  branch; it does not assert that the branch exists yet (see **Lazy branches**).
+  With `create_branch` off the task has no branch and the key is left out.
 * The task file is the source of truth for `status` and `priority`. The brackets in
   `Tasks.md` mirror it; keep them in step (see **Backlog mirror**).
 
@@ -52,25 +58,65 @@ branch: task/short-description
 2. Keep the tasks whose `status` matches the one you were asked to process.
 3. Take `high` before `medium` before `low`; on a tie, the oldest file first.
 
+## Kinds
+
+A backlog heading may say what kind of work it is, before a colon:
+
+```markdown
+### feature: add a login page [draft, high]
+### bug: duplicate invoice rows [draft, high]
+### task: bump the plugin version [draft, low]
+### bump the plugin version [draft, low]
+```
+
+The last two mean the same thing: **no prefix means `task`**.
+
+| Kind | Branch |
+| :- | :- |
+| `feature` | `feature/<slug>` |
+| `bug` | `bug/<slug>` |
+| `task` | `task/<slug>` |
+
+Naming the branch is all a kind decides. Whether a plan is required is the
+**status** (see **Transitions**); whether a branch is permitted at all is
+**Configuration**.
+
+* The prefix is matched case-insensitively, and `feature`, `bug` and `task` are
+  the only three kinds. `hotfix` is not one: it names urgency, and nothing in this
+  protocol acts on urgency.
+* **The prefix is stripped before the slug is derived.** `### feature: add a login
+  page` gives the slug `add-a-login-page` and the branch `feature/add-a-login-page`
+  — not `feature/feature-add-a-login-page`.
+* A word before a colon that is not one of the three kinds is part of the title.
+  `### fix: parser crash` is a `task` titled `fix: parser crash`, slug
+  `fix-parser-crash`. A colon in a title is ordinary English: do not guess at a
+  fourth kind, and do not stop to ask.
+* The brackets stay `[<status>, <priority>]`. The kind never goes in them.
+* Every kind is reviewed by a human. **No kind skips `in_review`**, and every kind
+  writes `## How to review` on the way there.
+
 ## Creating a task
 
 When the named task has no task file yet:
 
-1. Derive the slug from the entry's heading: lower-case it, replace every run of
-   characters outside `a-z0-9` with a single `-`, then strip any leading and
-   trailing `-`. So `task id/name` gives `task-id-name`.
-2. Check the slug. It must match `^[a-z0-9][a-z0-9-]*[a-z0-9]$`, be at most 60
+1. Read the kind from the heading's prefix as **Kinds** describes, and take the
+   title to be the heading with that prefix removed.
+2. Derive the slug from the title: lower-case it, replace every run of characters
+   outside `a-z0-9` with a single `-`, then strip any leading and trailing `-`. So
+   `task id/name` gives `task-id-name`.
+3. Check the slug. It must match `^[a-z0-9][a-z0-9-]*[a-z0-9]$`, be at most 60
    characters long, and belong to no existing task file. A slug that matches that
    pattern is always a legal git branch name, so nothing else has to be checked.
    When the check fails, do not invent a different slug: stop and ask the human to
    edit the heading.
-3. Write `docs/tasks/<slug>.md` with `id: <slug>`, and `branch: task/<slug>` when
-   `create_branch` is on (see **Configuration**); leave `branch:` out when it is
-   off. Take `status` and `priority` from the entry's brackets.
-4. Copy the entry's explanation into the body as the task description. Do not write
+4. Write `docs/tasks/<slug>.md` with `id: <slug>` and `kind: <kind>`, and
+   `branch: <kind>/<slug>` when `create_branch` is on (see **Configuration**);
+   leave `branch:` out when it is off. Take `status` and `priority` from the
+   entry's brackets.
+5. Copy the entry's explanation into the body as the task description. Do not write
    an implementation plan yet.
-5. Add a link to the task file as the first line under the entry's heading:
-   `plan: [<slug>.md](<slug>.md)`. Leave the brackets in place.
+6. Add a link to the task file as the first line under the entry's heading:
+   `file: [<slug>.md](<slug>.md)`. Leave the heading and its brackets as they are.
 
 For *the next task* rather than a named one, use the `next-task` skill.
 
@@ -83,6 +129,10 @@ whole life of the task. Keep the mirror in step, in both directions:
   commit.
 * A human changed the brackets → copy the new `status` and `priority` into the task
   file's frontmatter when you next pick the task up, and work from that.
+* The heading's prefix and the task file's `kind:` say the same thing. A human who
+  changed the prefix changed the kind: copy it across, and update `branch:` with
+  it. Once the branch exists its name is fixed, so report the mismatch and stop
+  rather than renaming a branch or leaving the two out of step.
 
 ## Configuration
 
@@ -122,6 +172,16 @@ reading applies to `create_pull_request`.
 contradiction: there is no branch to open a request from. Report it and stop
 rather than resolving it either way.
 
+## Lazy branches
+
+With `create_branch` on, the branch is not made when a task reaches
+`in_progress`. It is made at the first moment there is **something to commit**:
+create the branch named in `branch:`, switch to it, and commit there.
+
+A task that turns out to write no code — a decision record — therefore never
+creates a branch at all, and reaching `done` has nothing to merge. That is why
+`branch:` names a branch and **does not assert** that the branch exists.
+
 ## The host, when requests are on
 
 Read the host from `git remote get-url origin`. A `github.com` remote uses `gh`,
@@ -137,18 +197,30 @@ fall back to a local merge to get around it.
 
 ## Transitions
 
-**`draft` → `planning`** — human only. Do not set `planning` yourself.
+**`draft` → `planning` or `planned`** — human only, both routes, and the human
+chooses which. Do not set either yourself.
+
+* `planning` asks for a plan.
+* `planned` with no `# Implementation Plan` section means there is nothing worth
+  planning: implement it.
 
 **`planning` → `planned`** — append a `# Implementation Plan` section to the task
 file: the steps, and any open question a human must answer. Set `planned` and stop;
 a human verifies the plan.
 
-**`planned` → `in_progress`** — set `in_progress` and commit it on `main`. With
-`create_branch` on, create the branch named in `branch` and write the code, the
-**unit tests** and the documentation the change makes wrong on it. With
-`create_branch` off, leave `branch:` out of the task file's frontmatter and commit
-the code, the tests and the documentation on `main`. No later step audits the
-documentation.
+**`planned` → `in_progress`** — set `in_progress` and commit it on `main`. A
+`# Implementation Plan` section in the task file is one a human verified; its
+absence means the human waived the plan. Either way, implement it — never go back
+and write a plan for a task a human set to `planned` without one.
+
+Write the code, the **unit tests** and the documentation the change makes wrong.
+With `create_branch` on, that work goes on the task's branch, made when there is
+something to commit (see **Lazy branches**). With `create_branch` off, leave
+`branch:` out of the task file's frontmatter and commit everything on `main`. No
+later step audits the documentation.
+
+A human who rejects a plan sets `planning` again, or `draft` — never `planned`
+with the plan section deleted, which this transition reads as a waiver.
 
 **`in_progress` → `in_review`** — the implementation is committed and ready to be
 read. With `create_pull_request` off, nothing is pushed and nothing is opened: set
@@ -176,7 +248,8 @@ picks the new commits up when the branch is pushed.
 
 **`approved` → `done`** — how the work lands depends on what was permitted:
 
-* No branch: there is nothing to merge. Set `done` and mirror it.
+* No branch, or a branch `branch:` names that was never made: there is nothing to
+  merge. Set `done` and mirror it.
 * A branch and no request: merge it into `main` (fast-forward), delete the branch,
   set `done`.
 * A request: the host merges it, not you. Check that it is merged as **The host**

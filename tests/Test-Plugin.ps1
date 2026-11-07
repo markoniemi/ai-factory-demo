@@ -133,7 +133,7 @@ Test-Case 'the task skill states the task file shape and the backlog mirror' {
 
 Test-Case 'next-task states the selection rule' {
     $body = Get-Content (Join-Path $root 'skills/next-task/SKILL.md') -Raw
-    Assert-True ($body -match 'plan:') 'next-task must skip entries that already have a plan: line'
+    Assert-True ($body -match 'file:') 'next-task must skip entries that already have a file: line'
     Assert-True ($body -match 'priority') 'next-task must order by priority'
 }
 
@@ -491,7 +491,7 @@ Test-Case 'the plugin advertises four skills' {
 
 Test-Case 'the protocol makes branch: conditional when it creates a task' {
     $body = Get-Content (Join-Path $root 'skills/task/SKILL.md') -Raw
-    $step = [regex]::Match($body, '(?s)3\. Write `docs/tasks/<slug>\.md`.*?\n\d\. ').Value
+    $step = [regex]::Match($body, '(?s)\d\. Write `docs/tasks/<slug>\.md`.*?\n\d\. ').Value
     Assert-True ($step.Length -gt 0) 'the Creating a task step that writes the file was not found'
     Assert-True ($step -match 'create_branch') 'that step must make branch: conditional on create_branch'
 }
@@ -534,6 +534,212 @@ Test-Case 'a How to review section is never an empty heading' {
         if (-not $m.Success) { continue }
         Assert-True ($m.Groups[1].Value.Trim().Length -gt 0) "$($file.Name) has a How to review heading with nothing under it"
     }
+}
+Write-Host 'kinds and the heading prefix'
+
+$script:TaskKinds = @('feature', 'bug', 'task')
+
+function Split-TaskHeading {
+    param([string] $Heading)
+
+    # Accepts a whole backlog heading or a bare title: the leading hashes and the
+    # trailing brackets are dropped before the prefix is looked for.
+    $text = (($Heading.Trim() -replace '^#+\s*', '') -replace '\s*\[[^\]]*\]\s*$', '').Trim()
+
+    if ($text -match '^([A-Za-z]+):\s*(\S.*)$') {
+        $word = $matches[1].ToLowerInvariant()
+        if ($script:TaskKinds -contains $word) {
+            return @{ Kind = $word; Title = $matches[2].Trim() }
+        }
+    }
+    return @{ Kind = 'task'; Title = $text }
+}
+
+function Get-EntryBrackets {
+    param([string] $Heading)
+
+    if (-not ($Heading -match '\[([^\]]*)\]\s*$')) { throw "no brackets in '$Heading'" }
+    $fields = @(($matches[1] -split ',') | ForEach-Object { $_.Trim() })
+    if ($fields.Count -ne 2) {
+        throw "the brackets hold exactly two fields, got $($fields.Count) in '$Heading'"
+    }
+    return @{ Status = $fields[0]; Priority = $fields[1] }
+}
+
+function Get-BacklogHeadings {
+    $inBacklog = $false
+    $found = @()
+    foreach ($line in (Get-Content (Join-Path $root 'docs/tasks/Tasks.md'))) {
+        if ($line -match '^##\s+Backlog') { $inBacklog = $true; continue }
+        if ($inBacklog -and $line -match '^###\s+(.+)$') { $found += $matches[1] }
+    }
+    return $found
+}
+
+Test-Case 'a heading prefix names the kind, and its absence means task' {
+    $cases = @(
+        @{ Heading = 'feature: add a login page';     Kind = 'feature'; Title = 'add a login page' },
+        @{ Heading = 'bug: duplicate invoice rows';   Kind = 'bug';     Title = 'duplicate invoice rows' },
+        @{ Heading = 'task: bump the plugin version'; Kind = 'task';    Title = 'bump the plugin version' },
+        @{ Heading = 'Feature: Add A Login Page';     Kind = 'feature'; Title = 'Add A Login Page' },
+        @{ Heading = '### bug: rows [draft, high]';   Kind = 'bug';     Title = 'rows' },
+        @{ Heading = 'bump the plugin version';       Kind = 'task';    Title = 'bump the plugin version' }
+    )
+    foreach ($case in $cases) {
+        $parsed = Split-TaskHeading $case.Heading
+        Assert-Equal $case.Kind $parsed.Kind "kind of '$($case.Heading)'"
+        Assert-Equal $case.Title $parsed.Title "title of '$($case.Heading)'"
+    }
+}
+
+Test-Case 'the slug comes from the title, never from the prefix' {
+    $parsed = Split-TaskHeading 'feature: add a login page'
+    $slug = Get-TaskSlug $parsed.Title
+    Assert-Equal 'add-a-login-page' $slug 'the prefix must be stripped before the slug is derived'
+    Assert-Equal 'feature/add-a-login-page' "$($parsed.Kind)/$slug" 'the branch must not carry the kind twice'
+    Assert-True (Test-TaskSlug $slug) 'the stripped slug must still pass the rule'
+}
+
+Test-Case 'a colon after anything but a kind is part of the title' {
+    # hotfix is the one that matters: it was named in the backlog entry and is
+    # deliberately not a kind, so it must read as an ordinary title.
+    foreach ($case in @(
+        @{ Heading = 'fix: parser crash';    Title = 'fix: parser crash';    Slug = 'fix-parser-crash' },
+        @{ Heading = 'hotfix: token expiry'; Title = 'hotfix: token expiry'; Slug = 'hotfix-token-expiry' },
+        @{ Heading = 'chore: bump';          Title = 'chore: bump';          Slug = 'chore-bump' }
+    )) {
+        $parsed = Split-TaskHeading $case.Heading
+        Assert-Equal 'task' $parsed.Kind "'$($case.Heading)' is a task, not a fourth kind"
+        Assert-Equal $case.Title $parsed.Title "title of '$($case.Heading)'"
+        Assert-Equal $case.Slug (Get-TaskSlug $parsed.Title) "slug of '$($case.Heading)'"
+    }
+}
+
+Test-Case 'a task file with no kind: key is a task' {
+    foreach ($file in (Get-TaskFiles)) {
+        $fm = Get-Frontmatter $file.FullName
+        $kind = $fm['kind']
+        if ([string]::IsNullOrWhiteSpace($kind)) { $kind = 'task' }
+        Assert-True ($script:TaskKinds -contains $kind) "$($file.Name) has an unknown kind '$kind'"
+    }
+}
+
+Test-Case 'the protocol names the three kinds and what each branch is called' {
+    $body = Get-Content (Join-Path $root 'skills/task/SKILL.md') -Raw
+    foreach ($kind in $script:TaskKinds) {
+        Assert-True ($body -match [regex]::Escape("$kind/<slug>")) "the protocol must say a $kind branch is called $kind/<slug>"
+    }
+    Assert-True ($body -match 'no\s+prefix\s+means') 'the protocol must state the default kind'
+    Assert-True ($body -match 'stripped') 'the protocol must say the prefix is stripped before the slug'
+    Assert-True (-not ($body -match 'hotfix/<slug>')) 'hotfix is not a kind and has no branch of its own'
+}
+
+Test-Case 'every branch name is its kind and its id' {
+    foreach ($file in (Get-TaskFiles)) {
+        $fm = Get-Frontmatter $file.FullName
+        $branch = $fm['branch']
+        if ([string]::IsNullOrWhiteSpace($branch)) { continue }
+        $kind = $fm['kind']
+        if ([string]::IsNullOrWhiteSpace($kind)) { $kind = 'task' }
+        Assert-Equal "$kind/$($fm['id'])" $branch "$($file.Name): branch must be <kind>/<id>"
+    }
+    # Stated for all three kinds as well, so the rule is still tested in a project
+    # like this one, where create_branch is off and no task file carries a branch.
+    foreach ($kind in $script:TaskKinds) {
+        $parsed = Split-TaskHeading "${kind}: add a login page"
+        Assert-Equal "$kind/add-a-login-page" "$($parsed.Kind)/$(Get-TaskSlug $parsed.Title)" "derived branch for $kind"
+    }
+}
+
+if ($git) {
+    Test-Case 'a branch name for every kind is a legal git ref' {
+        foreach ($kind in $script:TaskKinds) {
+            $null = & $git.Source check-ref-format "refs/heads/$kind/add-a-login-page"
+            if ($LASTEXITCODE -ne 0) { throw "$kind/add-a-login-page is not a legal branch name" }
+        }
+    }
+}
+else {
+    Skip-Case 'a branch name for every kind is a legal git ref' 'git is not on PATH'
+}
+
+Test-Case 'the brackets hold exactly two fields' {
+    $headings = Get-BacklogHeadings
+    Assert-True ($headings.Count -gt 0) 'docs/tasks/Tasks.md holds no backlog entries'
+    foreach ($heading in $headings) {
+        $brackets = Get-EntryBrackets $heading
+        Assert-True (-not [string]::IsNullOrWhiteSpace($brackets.Status)) "'$heading' has no status"
+        Assert-True (-not [string]::IsNullOrWhiteSpace($brackets.Priority)) "'$heading' has no priority"
+    }
+    $rejected = $false
+    try { Get-EntryBrackets '### add a login page [draft, high, feature]' } catch { $rejected = $true }
+    Assert-True $rejected 'a third bracket field must be rejected: the kind lives in the heading'
+}
+
+Test-Case 'a heading prefix matches its task file kind' {
+    foreach ($heading in (Get-BacklogHeadings)) {
+        $parsed = Split-TaskHeading $heading
+        $path = Join-Path $root "docs/tasks/$(Get-TaskSlug $parsed.Title).md"
+        if (-not (Test-Path $path)) { continue }
+        $fm = Get-Frontmatter $path
+        $kind = $fm['kind']
+        if ([string]::IsNullOrWhiteSpace($kind)) { $kind = 'task' }
+        Assert-Equal $parsed.Kind $kind "$(Split-Path -Leaf $path): kind must mirror the heading prefix"
+    }
+}
+
+Write-Host 'the status decides whether a plan is required'
+
+Test-Case 'the protocol states both routes out of draft, and both are human only' {
+    $body = (Get-Content (Join-Path $root 'skills/task/SKILL.md') -Raw) -replace "`r`n", "`n"
+    $step = [regex]::Match($body, '(?s)\n\*\*\x60draft(.*?)(?=\n\*\*\x60planning)').Value
+    Assert-True ($step.Length -gt 0) 'the draft transition was not found'
+    Assert-True ($step -match 'planning') 'draft must offer the planning route'
+    Assert-True ($step -match 'planned') 'draft must offer the straight-to-planned route'
+    Assert-True ($step -match 'human\s+only') 'both routes out of draft are human only'
+}
+
+Test-Case 'the protocol says planned without a plan means implement it' {
+    $body = (Get-Content (Join-Path $root 'skills/task/SKILL.md') -Raw) -replace "`r`n", "`n"
+    $step = [regex]::Match($body, '(?s)\n\*\*\x60planned.{0,30}in_progress(.*?)(?=\n\*\*\x60)').Value
+    Assert-True ($step.Length -gt 0) 'the planned to in_progress transition was not found'
+    Assert-True ($step -match 'Implementation\s+Plan') 'that transition must read whether a plan section is there'
+    Assert-True ($body -match 'reject') 'the protocol must say how a human rejects a plan'
+    Assert-True ($body -match 'no\s+kind\s+skips') 'the protocol must say no kind skips human review'
+    # No test asserts that a planned task has a plan section. That invariant is
+    # deliberately gone: planned means cleared to implement, with or without one.
+}
+
+Test-Case 'the branch is created only when there is something to commit' {
+    $body = (Get-Content (Join-Path $root 'skills/task/SKILL.md') -Raw) -replace "`r`n", "`n"
+    Assert-True ($body -match 'something\s+to\s+commit') 'the protocol must create the branch lazily'
+    Assert-True ($body -match 'does\s+not\s+assert') 'branch: must name the branch without asserting it exists'
+}
+
+Test-Case 'the entry link is named file:, not plan:' {
+    $task = Get-Content (Join-Path $root 'skills/task/SKILL.md') -Raw
+    Assert-True ($task -match [regex]::Escape('file: [<slug>.md](<slug>.md)')) 'the protocol must write a file: link'
+
+    foreach ($name in @('task', 'next-task', 'clean-tasks')) {
+        $body = Get-Content (Join-Path $root "skills/$name/SKILL.md") -Raw
+        Assert-True (-not ($body -match 'plan:')) "skills/$name/SKILL.md still names the entry link plan:"
+        Assert-True ($body -match 'file:') "skills/$name/SKILL.md must name the entry link file:"
+    }
+
+    foreach ($path in @('docs/tasks/Tasks.md', 'skills/init/templates/Tasks.md', 'docs/tasks/README.md')) {
+        $text = Get-Content (Join-Path $root $path) -Raw
+        Assert-True (-not ($text -match 'plan:')) "$path still carries a plan: line"
+    }
+}
+
+Test-Case 'the backlog template documents the kinds and the plan-skipping route' {
+    $text = Get-Content (Get-TemplatePath 'Tasks.md') -Raw
+    foreach ($kind in $script:TaskKinds) {
+        Assert-True ($text -match [regex]::Escape("${kind}:")) "the template must name the kind '$kind'"
+    }
+    Assert-True ($text -match 'file:') 'the template must name the file: link'
+    Assert-True ($text -match 'no\s+prefix') 'the template must state the default kind'
+    Assert-True ($text -match 'with\s+no\s+plan') 'the template must say planned with no plan means implement it'
 }
 Write-Host 'claude plugin validate'
 

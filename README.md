@@ -48,17 +48,26 @@ A backlog entry is a heading plus a short explanation, with the status and the
 priority in brackets:
 
 ```markdown
-### move Tasks to docs/tasks [draft, high]
+### feature: move Tasks to docs/tasks [draft, high]
 
 Move the task directory from `Tasks/` to `docs/tasks/` so all documentation
 lives under `docs/`.
 ```
+
+The word before the colon is the **kind** — `feature`, `bug` or `task`, and no
+prefix means `task`. It decides what the branch is called, `feature/<slug>`,
+`bug/<slug>` or `task/<slug>`, and nothing else.
 
 Statuses: `draft` → `planning` → `planned` → `in_progress` → `in_review` →
 `approved` → `done`, with `changes_requested` back to `in_review`. A human moves
 `draft` → `planning`, verifies the plan at `planned`, reviews the diff at
 `in_review` and merges at `approved`; the agent does the rest. Priorities are
 `high`, `medium` and `low`.
+
+**Whether a plan is required is the status, not the kind.** `planning` asks for
+one. Setting `planned` yourself, with no plan in the task file, waives it and the
+agent goes straight to the code. Either way `planned` means cleared to implement,
+and review at `in_review` is a human's for every kind.
 
 ## Configuration
 
@@ -126,7 +135,9 @@ name a *kind* of work, which is the one real argument for it. It was declined:
 Nulab's Backlog - and the npm name is taken, so the rename buys a crowded,
 less searchable name. The repository name is also the marketplace address, so a
 rename breaks `/plugin marketplace add markoniemi/task-plugin` and every install.
-The vocabulary collision is paid in the kind names instead.
+The vocabulary collision is paid in this plugin's own prose instead: a **task
+file** is the container, whatever kind it holds, and the kind is always written in
+backticks - a `task`.
 
 Worth knowing while comparing: [Backlog.md](https://github.com/MrLesk/Backlog.md)
 keeps markdown tasks in the repository much as this does, and arrived
