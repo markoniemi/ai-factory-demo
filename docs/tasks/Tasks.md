@@ -35,7 +35,7 @@ Priorities: `high` | `medium` | `low`.
 
 ## Backlog
 
-### feature vs task [approved, high]
+### feature vs task [done, high]
 
 file: [feature-vs-task.md](feature-vs-task.md)
 
