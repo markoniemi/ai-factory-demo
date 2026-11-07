@@ -64,7 +64,7 @@ Status ladder:
   `planning` and `planned` are not reachable; asking for them on a chore is a
   question for the human, not a status to set.
 
-Configuration keeps its meaning from `plugin-config.md`: each key is a **ceiling**,
+Configuration keeps the meaning the *plugin config* task gave it: each key is a **ceiling**,
 and the two layers AND together. `create_branch: false` means a `feature` gets no
 branch either - the human settled that when `plugin-config` was planned. The kind
 only ever asks for less than the ceiling, never more.

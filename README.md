@@ -17,6 +17,11 @@ Installing at user scope makes it available in every project on the machine. Dur
 development, `claude --plugin-dir <path-to-this-clone>` loads it straight from disk,
 and `claude plugin validate .` checks the manifests.
 
+A repository of your own is a third-party marketplace, which an employer can
+restrict or block through managed settings. Check that before depending on the
+install line above at work; `--plugin-dir` against a local clone still works when
+marketplaces are blocked, at the cost of updating by hand.
+
 ## Commands
 
 | Command | What it does |
@@ -85,9 +90,28 @@ the plugin picks the tool from that remote.
 powershell -File tests/Test-Plugin.ps1
 ```
 
-Plain PowerShell, no Pester. It checks the two manifests, the three skills'
+Plain PowerShell, no Pester. It checks the two manifests, the four skills'
 frontmatter, that the protocol's statuses and rules survived, that no `AGENTS.md` is
 left behind, and that `claude plugin validate` passes.
+
+## Decisions
+
+Two things this plugin deliberately does not do. Both were decided after the work
+was planned out, so the reasoning is worth more than the conclusion.
+
+**No documentation of its own.** `skills/task/SKILL.md` is the single source of
+truth, this file explains the plugin to a human, and `skills/init/templates/` is
+what a new project gets. A separate manual would be a second place saying the same
+things with nothing keeping the two in step. Where drift would be expensive,
+`tests/Test-Plugin.ps1` guards it instead of a page asking people to remember.
+
+**No subagent per task.** A session cannot clear itself - no skill, hook or plugin
+can clear the context it runs in - so delegating to a subagent is the only way to
+give a task a fresh window. It was declined because the saving is not what it looks
+like: `/task:task` injects the whole protocol into the session before any delegation
+could happen, so the agent reads it a second time and the total spend rises.
+Delegation buys more tasks per session, not cheaper tasks. Reopening this means
+first splitting the protocol out of the skill a human invokes.
 
 ## This repository's own backlog
 
