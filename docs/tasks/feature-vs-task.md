@@ -8,6 +8,12 @@ priority: high
 
 - how to create features and tasks from tasks.md? feature requires branch, possibly pr. task does not need plan and can be done directly on main.
 
+Merged in from the *tasks branch name* entry, on the human's instruction
+(2026-11-07), because it is the same decision seen from the branch side:
+
+- git supports branches bug/feature/hotfix. how should tasks.md state what kind of branch is needed?
+- also, branch is not always needed, how to tell ai not to use branch? when status is planned and there is no plan?
+
 # Implementation Plan
 
 ## What this decides
@@ -15,6 +21,21 @@ priority: high
 Two kinds of backlog entry, so small work stops paying for a plan, a branch and a
 review it does not need. Today every entry runs the same eight-status ladder and
 gets a branch whenever `create_branch` permits one.
+
+## What the merge changes
+
+Folding *tasks branch name* in answers that entry's second bullet twice over, and
+both answers already exist:
+
+* *How do I tell the AI not to use a branch?* Project-wide, that is
+  `create_branch: false` in `Tasks.md` frontmatter, settled by the *plugin config*
+  task. Per task, it is the `chore` kind below. Nothing new is needed.
+* *When status is planned and there is no plan?* Read as "work with no plan should
+  not get a branch", that is exactly `chore`.
+
+What the merge genuinely adds is the first bullet: the branch *name*. And asking
+it exposes that `feature` and `chore` are not two points on a scale. They are two
+independent booleans the kind happens to pair up.
 
 ## The vocabulary collision
 
@@ -47,22 +68,57 @@ every file and branch name would carry the kind.
 An entry with two fields gets the default kind (open question 2). A third field
 that is neither kind is not guessed at: stop and ask, as with a bad config value.
 
+## A kind is a named pair of two booleans
+
+*Does this need a plan?* and *does this need a branch?* are independent, and the
+original two-kind proposal only named the diagonal. All four combinations occur,
+and this repository has run three of them:
+
+| Needs a plan | Needs a branch | What it is | Name |
+| :- | :- | :- | :- |
+| yes | yes | ordinary feature work | `feature` |
+| yes | no | a decision record; *use agents* and *tasks as plugin vs skill* were both this | open question 5 |
+| no | yes | an urgent fix, no time to plan, still isolated | `hotfix` |
+| no | no | a version bump, a typo | `chore` |
+
+`bug`, which the merged entry names, is `feature`'s pair of answers with a
+different word on the branch - so it is a naming question, not a behaviour one.
+
+## The branch name follows from the kind
+
+The branch prefix is the kind, not a separate field:
+
+```
+feature/add-a-login-page
+hotfix/token-expiry-off-by-one
+bug/duplicate-invoice-rows
+```
+
+`task/<slug>` goes away. No existing branch is affected - every branch this
+repository ever made is merged and deleted, so the rename costs nothing now and
+will cost real work later.
+
+This is why the prefix should not be a fourth bracket field: a kind that needed a
+plan, needed a branch, and then separately named that branch `chore/` would be
+three facts a human has to keep consistent for no gain. One word in the brackets
+decides all three.
+
 ## What each kind permits
 
-| | `feature` | `chore` |
-| :- | :- | :- |
-| Plan | required; `planning` -> `planned`, a human verifies it | skipped |
-| Branch | wanted, when `create_branch` permits | none; commits on `main` |
-| Request | when `create_pull_request` permits | never |
-| Review | `in_review` -> `approved`, human only | open question 3 |
+| | plan | branch | request | review |
+| :- | :- | :- | :- | :- |
+| `feature` | required, human verifies it | `feature/<slug>`, when `create_branch` permits | when `create_pull_request` permits | human only |
+| `bug` | required, human verifies it | `bug/<slug>`, when `create_branch` permits | when `create_pull_request` permits | human only |
+| `hotfix` | skipped | `hotfix/<slug>`, when `create_branch` permits | when `create_pull_request` permits | human only |
+| `chore` | skipped | none; commits on `main` | never | open question 3 |
 
 Status ladder:
 
-* `feature`: `draft` -> `planning` -> `planned` -> `in_progress` -> `in_review` ->
+* With a plan: `draft` -> `planning` -> `planned` -> `in_progress` -> `in_review` ->
   (`changes_requested` -> `in_review`) -> `approved` -> `done`.
-* `chore`: `draft` -> `in_progress` -> `in_review` -> `approved` -> `done`.
-  `planning` and `planned` are not reachable; asking for them on a chore is a
-  question for the human, not a status to set.
+* Without: `draft` -> `in_progress` -> `in_review` -> `approved` -> `done`.
+  `planning` and `planned` are not reachable; asking for them is a question for the
+  human, not a status to set.
 
 Configuration keeps the meaning the *plugin config* task gave it: each key is a **ceiling**,
 and the two layers AND together. `create_branch: false` means a `feature` gets no
@@ -78,13 +134,15 @@ open one from.
 1. Write the tests first, red.
 2. `skills/task/SKILL.md`: add `kind:` to the frontmatter block and a `## Kinds`
    section holding the table and the two ladders. Change **Creating a task** to
-   read the third bracket field, and split the three transitions that differ
-   (`draft`, `planned` -> `in_progress`, and the `planning` pair).
+   read the third bracket field and to build `branch:` from the kind rather than
+   from `task/`, and split the transitions that differ (`draft`, `planned` ->
+   `in_progress`, and the `planning` pair).
 3. `skills/next-task/SKILL.md`: carry the kind into the file it creates, and name
    the ladder the kind implies.
-4. `skills/init/templates/Tasks.md`: document the third bracket field, the two
-   kinds and the default, next to the statuses it already lists.
-5. `README.md` and `docs/tasks/README.md`: one paragraph each.
+4. `skills/init/templates/Tasks.md`: document the third bracket field, the kinds
+   and the default, next to the statuses it already lists.
+5. `README.md` and `docs/tasks/README.md`: one paragraph each, including the branch
+   prefixes, since `task/<slug>` is documented in both.
 6. Tests green, then `claude plugin validate . --strict`.
 
 ## Unit tests
@@ -97,30 +155,47 @@ In `tests/Test-Plugin.ps1`, extending the bracket helpers already there:
    "stop and ask" has something to stand on.
 3. Every existing task file still parses with no `kind:` key, so a task written
    before this change keeps working.
-4. The protocol names both kinds, and states for each whether a plan is required.
+4. The protocol names every kind, and states for each whether a plan is required
+   and what its branch is called.
 5. The template `Tasks.md` documents the third field and the default.
 6. Every `Tasks.md` entry whose brackets name a kind matches its task file's
    `kind:`, when the file exists - the mirror, tested in the same shape as the
    status mirror.
+7. Every `branch:` in a task file starts with its own `kind:` followed by `/`, and
+   no task file uses `task/`. This is the test that keeps the prefix derived rather
+   than typed.
+8. `git check-ref-format refs/heads/<branch>` still passes for every new prefix -
+   the slug rule already guarantees it, and the test states it for the four words
+   now in front of the slug.
 
 ## Relation to other backlog entries
 
-* `tasks branch name` [draft, medium] overlaps this directly: it asks how the
-  backlog says which *git* branch type is wanted, and a `feature` kind answers
-  most of it (`feature/<slug>` instead of `task/<slug>`). Open question 4.
-* `review instructions` [planning, medium] adds a step to `in_review`, which is
-  exactly the step open question 3 is about. Whichever lands second has to read
-  the first.
+*tasks branch name* is no longer a separate entry: it was merged into this one, so
+its old open question 4 is answered and gone.
+
+`review instructions` is `done`, and its `## How to review` section is written at
+`in_progress` -> `in_review`. A `chore` that skips review entirely (open question
+3) writes no such section, and the protocol has to say so.
 
 ## Open questions for the human
 
-1. Names. `feature` and `chore`, or `feature` and `task` with the collision
-   accepted, or something else?
-2. The default kind for a two-field bracket. `chore` is the cheap default and
-   makes existing short entries behave as the human already expects; `feature` is
-   the safe default and never skips a plan without being told to.
-3. Does a `chore` stop at `in_review` for a human, or reach `done` as soon as it is
-   committed and its tests pass? Skipping review is what makes a chore cheap; it
-   also removes the only gate.
-4. Fold `tasks branch name` into this task, or leave it as its own entry and let it
-   decide branch prefixes once the kinds exist?
+1. **How many kinds?** Four (`feature`, `bug`, `hotfix`, `chore`) answers the
+   merged entry in full and matches the branch types git users expect. Two
+   (`feature`, `chore`) is the smaller protocol, and a `bug` is then a `feature`
+   whose branch says `feature/`. More kinds cost nothing to implement and
+   everything to remember.
+2. **Names.** `chore` for the no-plan-no-branch kind - or `task`, accepting that
+   "the task file" then stops saying which kind it holds. The plugin itself is
+   called `task`, which is what makes that word expensive here.
+3. **The plan-but-no-branch kind.** *use agents* and *tasks as plugin vs skill*
+   were both exactly this: a plan, a decision, no code. Does it get a name of its
+   own - `decision`, `research`, `spike` - or does a `feature` that turns out to
+   write no code just not create its branch?
+4. **The default kind** for a two-field bracket. `chore` is cheap and matches how
+   your short entries read; `feature` is safe and never skips a plan unasked.
+   Every entry in the backlog today has two fields, so this decides what they are.
+5. **Does a `chore` stop at `in_review`?** Skipping review is what makes it cheap,
+   and it is also the only gate. It would also skip `## How to review`.
+6. **Drop `task/` entirely?** The prefixes above replace it. Nothing is lost now,
+   because no branch survives - but if you ever want one prefix for everything,
+   say so before this is implemented rather than after.

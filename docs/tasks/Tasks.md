@@ -31,16 +31,13 @@ Priorities: `high` | `medium` | `low`.
 
 ## Backlog
 
-### tasks branch name [draft, medium]
-
-- git supports branches bug/feature/hotfix. how should tasks.md state what kind of branch is needed?
-- also, branch is not always needed, how to tell ai not to use branch? when status is planned and there is no plan?
 
 ### feature vs task [planned, high]
 
 plan: [feature-vs-task.md](feature-vs-task.md)
 
 - how to create features and tasks from tasks.md? feature requires branch, possibly pr. task does not need plan and can be done directly on main.
+- merged in from *tasks branch name*: how should tasks.md state what kind of branch is needed (bug/feature/hotfix), and how is the AI told not to use a branch at all?
 
 ### powerpoint presentation [draft, low]
 
