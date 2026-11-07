@@ -105,8 +105,9 @@ left behind, and that `claude plugin validate` passes.
 
 The same command runs on every push and pull request, from
 `.github/workflows/build.yml`, on a Windows runner because the suite is Windows
-PowerShell 5.1. The build installs nothing: the `claude plugin validate` case
-skips itself when the CLI is absent, which on a runner it is.
+PowerShell 5.1. The build installs nothing and needs no API key: nothing in the
+suite calls a model, and the `claude plugin validate` case skips itself when the
+CLI is absent, which on a runner it is.
 
 ## Decisions
 

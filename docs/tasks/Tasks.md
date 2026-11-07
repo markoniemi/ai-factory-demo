@@ -40,13 +40,6 @@ Priorities: `high` | `medium` | `low`.
 
 - when tasks workflow and plugin/skill implementation, a powerpoint presentation would be nice
 
-### github build [done, low]
-
-file: [github-build.md](github-build.md)
-
-- does it make sense to have github build? Can tests run in github, there are no api tokens if tests require ai.
-
-
 
 ### reduce readme and skills [done, low]
 
