@@ -35,8 +35,7 @@ Priorities: `high` | `medium` | `low`.
 
 ## Backlog
 
-
-### feature vs task [in_review, high]
+### feature vs task [approved, high]
 
 file: [feature-vs-task.md](feature-vs-task.md)
 
@@ -48,7 +47,11 @@ file: [feature-vs-task.md](feature-vs-task.md)
 
 - when tasks workflow and plugin/skill implementation, a powerpoint presentation would be nice
 
-### github build [draft, low]
+### github build [in_progress, low]
+
+file: [github-build.md](github-build.md)
+
+- does it make sense to have github build? Can tests run in github, there are no api tokens if tests require ai.
 
 ### task plugin vs https://backlog.so/ [done, high]
 
