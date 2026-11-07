@@ -1,6 +1,6 @@
 ---
 id: github-build
-status: in_progress
+status: in_review
 priority: low
 kind: task
 ---
@@ -26,3 +26,31 @@ for:
 * A release job - tagging, or bumping `version` in `.claude-plugin/plugin.json`.
 * A second job on `pwsh` 7. The protocol and the suite target Windows PowerShell
   5.1 on purpose; adding 7 would be a portability decision, not a build.
+
+## Result
+
+`.github/workflows/build.yml`, commit `695685a`. One job, `windows-latest`,
+`actions/checkout@v4`, then the command the README documents, run through `shell:
+cmd` so the interpreter is Windows PowerShell 5.1 rather than the runner's default
+`pwsh` 7. The script exits non-zero on any failure, which fails the step.
+
+Four tests, 55 -> 59. One of them first forbade the string `claude` anywhere in the
+workflow and was tripped by its own explanatory comment; it now drops comment lines
+and asserts that no *step* invokes the CLI, which is the rule it meant.
+
+`README.md` gained a paragraph under `## Tests`.
+
+## How to review
+
+1. Read `.github/workflows/build.yml`. It is 24 lines, and the comment in it is
+   the argument for `shell: cmd` over the default shell.
+2. `powershell -NoProfile -ExecutionPolicy Bypass -File tests/Test-Plugin.ps1` -
+   the exact line the workflow runs. Expect `passed 59, failed 0, skipped 0` and
+   exit code 0. On a runner it is `skipped 1`, because `claude` is absent there and
+   that case skips itself.
+3. `git show 695685a -- tests/Test-Plugin.ps1` for the four new cases, the last of
+   which is the one that needed loosening.
+4. **The workflow has never run.** Nothing was pushed, so GitHub has not parsed
+   this YAML or executed the job; `windows-latest` having `powershell.exe` on
+   `PATH` and `git` available are assumptions, not observations. The first push is
+   the real test, and a failure there is a `changes_requested`, not a surprise.

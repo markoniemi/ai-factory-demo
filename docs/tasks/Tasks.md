@@ -47,7 +47,7 @@ file: [feature-vs-task.md](feature-vs-task.md)
 
 - when tasks workflow and plugin/skill implementation, a powerpoint presentation would be nice
 
-### github build [in_progress, low]
+### github build [in_review, low]
 
 file: [github-build.md](github-build.md)
 
