@@ -48,7 +48,7 @@ file: [github-build.md](github-build.md)
 
 
 
-### reduce readme and skills [approved, low]
+### reduce readme and skills [done, low]
 
 file: [reduce-readme-and-skills.md](reduce-readme-and-skills.md)
 

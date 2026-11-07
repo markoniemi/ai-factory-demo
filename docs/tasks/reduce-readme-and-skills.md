@@ -1,6 +1,6 @@
 ---
 id: reduce-readme-and-skills
-status: in_review
+status: done
 priority: low
 kind: task
 ---
