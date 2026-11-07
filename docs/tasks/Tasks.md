@@ -45,13 +45,6 @@ plan: [task-010-package-tasks-as-a-github-plugin.md](task-010-package-tasks-as-a
 - namespaced skills, /task:next-task, /task:clean-tasks, /task:task [name-of-task]
 - delete `docs/tasks/AGENTS.md` once the plugin exists, with no stub. a project keeps `Tasks.md`, its task files and `README.md`.
 
-### tasks as plugin vs skill [done, medium]
-
-plan: [task-009-tasks-as-plugin-vs-skill.md](task-009-tasks-as-plugin-vs-skill.md)
-
-- Does plugin support commands like /next-task /clean-tasks if tasks is a plugin?
-- can skill be reused, or is it necessary to create and publish a plugin?
-
 ### feature vs task [planned, high]
 
 plan: [feature-vs-task.md](feature-vs-task.md)
