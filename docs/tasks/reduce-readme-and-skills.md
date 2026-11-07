@@ -1,6 +1,6 @@
 ---
 id: reduce-readme-and-skills
-status: in_progress
+status: in_review
 priority: low
 kind: task
 ---
@@ -178,3 +178,59 @@ what happened here.
    `## Decisions` in the root `README.md` is three paragraphs of reasoning that
    exists because the conclusions alone were not enough. Recommend leaving the
    reasoning and cutting only what another file already says.
+
+Answered on 2026-11-07: the human asked for **reductions 1 to 5**, which settles
+open questions 2 and 3 yes. Questions 1, 4 and 5 are untouched, so the word budget
+(step 5) and the README pass (step 6) are **not done**.
+
+## Result
+
+`skills/task/SKILL.md`: **2148 -> 1955 words**, commit `f22db14`.
+
+| Was | Now | Reduction |
+| ----: | ----: | :- |
+| 113 | 0 | 1. the request path moved to `skills/task/references/host.md` |
+| 41 | 0 | 2. `## Selection` deleted |
+| 258 | 253 | 3. the prefix rule explained once, in `## Kinds` |
+| 576 | 558 | 4. `approved` -> `done` lost its self-repeating paragraph |
+| 218 | 212 | 5. the ceiling stated once instead of three times |
+
+Both transitions that need the host file name it by path and say to read it now.
+`## Creating a task` renumbered 1-5, its first two steps merged.
+
+Tests 59 -> 61. The existing case for the request path searched `SKILL.md` only, so
+moving the section would have read as deleting it; it now searches the referenced
+file as well. Two cases added: both transitions must name `references/host.md` and
+the section must not reappear in the protocol, and every heading referred to by
+name from this or another skill must still exist.
+
+**The estimate was wrong, and in the honest direction: 275 words predicted, 193
+delivered.** The two call sites each gained an explicit `${CLAUDE_PLUGIN_ROOT}`
+path and an instruction to read the file, which bought back about 25 words. That
+was the right trade - a pointer the agent might not follow is the whole risk of
+reduction 1 - but it should have been in the estimate.
+
+The plan's 1600-word target is not reached and was never in this scope: it needs
+the `## Transitions` pass, which is step 4 of **Steps** rather than one of the five
+reductions. `## Transitions` is still 558 words, more than a quarter of the file.
+
+## How to review
+
+1. `powershell -File tests/Test-Plugin.ps1` - expect `passed 61, failed 0,
+   skipped 0`. `claude plugin validate . --strict` passes.
+2. `git show f22db14 -- skills/task/SKILL.md` is a 69-line-deletion diff against
+   47 insertions. Read it as five independent cuts; none of them depends on
+   another.
+3. The one worth real attention is reduction 1. Read the `in_progress` ->
+   `in_review` and `approved` -> `done` transitions and ask whether an agent
+   reading them would open
+   `${CLAUDE_PLUGIN_ROOT}/skills/task/references/host.md`. If the answer is
+   "probably", that is not good enough and this is a `changes_requested`: the
+   saving is 113 words and the failure mode is silently not opening a pull
+   request.
+4. Re-measure, rather than trusting the numbers above:
+   `$t = [IO.File]::ReadAllText("skills/task/SKILL.md"); ($t -split '\s+' | ? { $_ }).Count`
+5. **Not exercised:** no request was opened, because `create_pull_request` is
+   `false` here and this repository has no configured host flow. Reduction 1 is
+   therefore tested by reading, not by running - the two new cases assert that the
+   file exists and is named, not that an agent obeys the pointer.
