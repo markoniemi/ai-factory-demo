@@ -59,13 +59,5 @@ plan: [review-instructions.md](review-instructions.md)
 
 - when implementation is done, add a short instructions on how to demonstrate new feature in ui or how to review the changes.
 
-### documentation [done, low]
-
-plan: [documentation.md](documentation.md)
-
-- when /task:clean-tasks is run, documentation should be checked that it is up-to-date.
-- should task-plugin have documentation of it own? is readme enough?
-- clean-tasks should check that readmes, agents.md, use cases and possible other documentation is up-to-date.
-
 ### github build [draft, low]
 
