@@ -40,7 +40,7 @@ Priorities: `high` | `medium` | `low`.
 
 - when tasks workflow and plugin/skill implementation, a powerpoint presentation would be nice
 
-### github build [approved, low]
+### github build [done, low]
 
 file: [github-build.md](github-build.md)
 

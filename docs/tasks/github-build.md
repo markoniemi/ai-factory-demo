@@ -1,6 +1,6 @@
 ---
 id: github-build
-status: in_review
+status: done
 priority: low
 kind: task
 ---
@@ -11,6 +11,14 @@ The backlog entry carried no explanation - the heading was all there was - and a
 human set it to `planned`, which waives the plan. So the description is the
 heading, and what follows is the reading it was implemented under. Say so if it is
 the wrong one; the work is one file.
+
+The backlog entry gained a description after this file was created, once the work
+was already written: *"does it make sense to have github build? Can tests run in
+github, there are no api tokens if tests require ai."* It is recorded here because
+the mirror carries `status`, `priority` and `kind`, not the description. Both
+questions are answered by what was built: the tests do run on a runner, and they
+need no API token, because nothing in the suite calls a model - the one case that
+wants the `claude` CLI skips itself when the CLI is absent.
 
 ## What this was taken to mean
 
