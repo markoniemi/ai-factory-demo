@@ -46,15 +46,6 @@ plan: [feature-vs-task.md](feature-vs-task.md)
 
 - when tasks workflow and plugin/skill implementation, a powerpoint presentation would be nice
 
-### task id/name [done, high]
-
-plan: [task-011-task-id-name.md](task-011-task-id-name.md)
-
-- the protocol states: "A task is a file `docs/tasks/task-NNN-<slug>.md"
-- metadate states: id: task-001
-- what if id was based on task heading, and human promises to make simple task headings
-- should the be a check that heading task can be used as git branch name?
-
 ### use agents [done, high]
 
 plan: [use-agents.md](use-agents.md)
