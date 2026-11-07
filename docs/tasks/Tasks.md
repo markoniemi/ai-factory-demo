@@ -35,19 +35,12 @@ Priorities: `high` | `medium` | `low`.
 
 ## Backlog
 
-### feature vs task [done, high]
-
-file: [feature-vs-task.md](feature-vs-task.md)
-
-- how to create features and tasks from tasks.md? feature requires branch, possibly pr. task does not need plan and can be done directly on main.
-- merged in from *tasks branch name*: how should tasks.md state what kind of branch is needed (bug/feature/hotfix), and how is the AI told not to use a branch at all?
-- add task type to heading, ### feature: feature-name, or ### bug: bug-name, or ### task: task-name. Default to task. Branch name is taken from task type.
 
 ### powerpoint presentation [draft, low]
 
 - when tasks workflow and plugin/skill implementation, a powerpoint presentation would be nice
 
-### github build [in_review, low]
+### github build [approved, low]
 
 file: [github-build.md](github-build.md)
 
@@ -61,7 +54,7 @@ file: [task-plugin-vs-https-backlog-so.md](task-plugin-vs-https-backlog-so.md)
 - does it overlap with task-plugin?
 - should i rename task-plugin to backlog-plugin? then naming backlog items as task and feature and epic would be no problem.
 
-### reduce readme and skills [in_review, low]
+### reduce readme and skills [approved, low]
 
 file: [reduce-readme-and-skills.md](reduce-readme-and-skills.md)
 

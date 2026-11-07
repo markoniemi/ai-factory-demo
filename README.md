@@ -110,7 +110,7 @@ skips itself when the CLI is absent, which on a runner it is.
 
 ## Decisions
 
-Three decisions taken after the work had been planned out, so the reasoning is
+Four decisions taken after the work had been planned out, so the reasoning is
 worth more than the conclusion.
 
 **No documentation of its own.** `skills/task/SKILL.md` is the single source of
@@ -149,6 +149,13 @@ keeps markdown tasks in the repository much as this does, and arrived
 independently at the same three human checkpoints - review the spec, review the
 plan, review the code. It differs in being a binary to install, with a kanban UI
 and an MCP server, where this is prose a skill injects.
+
+**No third bracket field.** The brackets stay `[<status>, <priority>]` and the kind
+goes in the heading, before a colon. A kind is a permanent fact about what the work
+is, where the brackets hold what changes as it moves, so putting it there would
+have been the wrong home. A prefix also stays out of the file and branch names - it
+is stripped before the slug is derived - and reads as part of the sentence a human
+is writing anyway.
 
 ## This repository's own backlog
 
