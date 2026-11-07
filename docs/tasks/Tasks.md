@@ -53,12 +53,6 @@ plan: [use-agents.md](use-agents.md)
 - implementing tasks from tasks.md in same session is not perfect for token spending.
 - is it possible to use agents or somehow clear session for each task automatically?
 
-### task init [done, high]
-
-plan: [task-init.md](task-init.md)
-
-- create a /task:init that creates Tasks.md with header. 
-
 ### review instructions [done, medium]
 
 plan: [review-instructions.md](review-instructions.md)
