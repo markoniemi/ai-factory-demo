@@ -31,15 +31,6 @@ Priorities: `high` | `medium` | `low`.
 
 ## Backlog
 
-### clean tasks [done, high]
-
-plan: [task-007-clean-tasks.md](task-007-clean-tasks.md)
-
-- this should be part of tasks workflow
-- implemented plans are no longer needed
-- corresponding headings/chapters in tasks.md can be removed
-- update documentation and usecases before deleting
-
 ### tasks branch name [draft, medium]
 
 - git supports branches bug/feature/hotfix. how should tasks.md state what kind of branch is needed?
