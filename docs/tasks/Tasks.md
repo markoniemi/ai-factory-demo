@@ -52,12 +52,6 @@ plan: [task-009-tasks-as-plugin-vs-skill.md](task-009-tasks-as-plugin-vs-skill.m
 - Does plugin support commands like /next-task /clean-tasks if tasks is a plugin?
 - can skill be reused, or is it necessary to create and publish a plugin?
 
-### superpowers compatibility [done, medium]
-
-plan: [task-008-superpowers-compatibility.md](task-008-superpowers-compatibility.md)
-
-- using superpowers plugin, which likes to write plans in some place, should tasks be compatible with superpowers plugin?
-
 ### feature vs task [planned, high]
 
 plan: [feature-vs-task.md](feature-vs-task.md)
